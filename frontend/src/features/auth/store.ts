@@ -25,40 +25,142 @@ export interface EffectivePermissionsResponse {
   permissions: string[];
 }
 
+const REFRESH_STORAGE_KEY = "nexzen_refresh_token";
+const BANGLA_DIGITS_KEY = "nexzen_bangla_digits";
+
+function readRefreshToken(): string | null {
+  try {
+    return window.sessionStorage.getItem(REFRESH_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeRefreshToken(token: string | null): void {
+  try {
+    if (token) {
+      window.sessionStorage.setItem(REFRESH_STORAGE_KEY, token);
+    } else {
+      window.sessionStorage.removeItem(REFRESH_STORAGE_KEY);
+    }
+  } catch {
+    // Ignore storage errors in restricted environments.
+  }
+}
+
+function readBanglaDigits(): boolean {
+  try {
+    return window.localStorage.getItem(BANGLA_DIGITS_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   user: AuthUser | null;
   permissions: string[];
   banglaDigits: boolean;
+  isRestoring: boolean;
   setSession: (tokens: TokenResponse, user: AuthUser, permissions: string[]) => void;
+  restoreSession: () => Promise<void>;
   toggleBanglaDigits: () => void;
   clearSession: () => void;
   logout: () => Promise<void>;
 }
 
+let restorePromise: Promise<void> | null = null;
+
 export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: null,
-  refreshToken: null,
+  refreshToken: readRefreshToken(),
   user: null,
   permissions: [],
-  banglaDigits: false,
+  banglaDigits: readBanglaDigits(),
+  isRestoring: Boolean(readRefreshToken()),
 
   setSession: (tokens, user, permissions) => {
+    writeRefreshToken(tokens.refresh_token);
     set({
       accessToken: tokens.access_token,
       refreshToken: tokens.refresh_token,
       user,
       permissions,
+      isRestoring: false,
     });
   },
 
+  restoreSession: async () => {
+    const existing = readRefreshToken();
+    if (!existing || get().accessToken) {
+      set({ isRestoring: false });
+      return;
+    }
+    if (restorePromise) {
+      await restorePromise;
+      return;
+    }
+
+    set({ isRestoring: true });
+    restorePromise = (async () => {
+      try {
+        const tokens = await apiRequest<TokenResponse>("/auth/refresh", {
+          method: "POST",
+          body: { refresh_token: existing },
+        });
+        const [user, permRes] = await Promise.all([
+          apiRequest<AuthUser>("/auth/me", { accessToken: tokens.access_token }),
+          apiRequest<EffectivePermissionsResponse>("/rbac/me/permissions", {
+            accessToken: tokens.access_token,
+          }),
+        ]);
+        writeRefreshToken(tokens.refresh_token);
+        set({
+          accessToken: tokens.access_token,
+          refreshToken: tokens.refresh_token,
+          user,
+          permissions: permRes.permissions,
+          isRestoring: false,
+        });
+      } catch {
+        writeRefreshToken(null);
+        set({
+          accessToken: null,
+          refreshToken: null,
+          user: null,
+          permissions: [],
+          isRestoring: false,
+        });
+      } finally {
+        restorePromise = null;
+      }
+    })();
+
+    await restorePromise;
+  },
+
   toggleBanglaDigits: () => {
-    set((state) => ({ banglaDigits: !state.banglaDigits }));
+    set((state) => {
+      const next = !state.banglaDigits;
+      try {
+        window.localStorage.setItem(BANGLA_DIGITS_KEY, next ? "1" : "0");
+      } catch {
+        // Ignore storage errors.
+      }
+      return { banglaDigits: next };
+    });
   },
 
   clearSession: () => {
-    set({ accessToken: null, refreshToken: null, user: null, permissions: [] });
+    writeRefreshToken(null);
+    set({
+      accessToken: null,
+      refreshToken: null,
+      user: null,
+      permissions: [],
+      isRestoring: false,
+    });
   },
 
   logout: async () => {

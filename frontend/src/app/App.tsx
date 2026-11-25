@@ -1,8 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type * as React from "react";
+import * as React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "@/components/layout/AppShell";
+import { TableSkeleton } from "@/components/states/TableSkeleton";
 import { AccountsPage } from "@/features/accounting/AccountsPage";
 import { JournalsPage } from "@/features/accounting/JournalsPage";
 import { TrialBalancePage } from "@/features/accounting/TrialBalancePage";
@@ -24,6 +25,15 @@ const queryClient = new QueryClient({
 
 function RequireAuth({ children }: { children: React.ReactElement }): React.JSX.Element {
   const accessToken = useAuthStore((s) => s.accessToken);
+  const isRestoring = useAuthStore((s) => s.isRestoring);
+
+  if (isRestoring) {
+    return (
+      <div className="mx-auto max-w-4xl p-8">
+        <TableSkeleton rows={5} columns={3} />
+      </div>
+    );
+  }
   if (!accessToken) {
     return <Navigate to="/login" replace />;
   }
@@ -31,6 +41,12 @@ function RequireAuth({ children }: { children: React.ReactElement }): React.JSX.
 }
 
 export function App(): React.JSX.Element {
+  const restoreSession = useAuthStore((s) => s.restoreSession);
+
+  React.useEffect(() => {
+    void restoreSession();
+  }, [restoreSession]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
