@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
-from app.api import auth, health
+from app.api import auth, health, rbac
 from app.core.config import Settings, get_settings
 from app.core.db import Database
 from app.core.error_handlers import register_error_handlers
@@ -62,4 +62,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     register_error_handlers(app)
     app.include_router(health.router)
     app.include_router(auth.router, prefix=active.api_prefix)
+    app.include_router(rbac.router, prefix=active.api_prefix)
     return app

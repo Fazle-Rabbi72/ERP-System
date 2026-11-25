@@ -1,5 +1,6 @@
 """FastAPI dependencies shared by routers."""
 
+from collections.abc import Awaitable, Callable
 from functools import partial
 from typing import Annotated
 
@@ -10,13 +11,20 @@ from redis.asyncio import Redis
 from app.core.auth_store import AuthStore
 from app.core.config import Settings
 from app.core.db import Database
-from app.core.exceptions import AuthenticationError, ServiceUnavailableError
+from app.core.exceptions import (
+    AuthenticationError,
+    PermissionDeniedError,
+    ServiceUnavailableError,
+)
+from app.core.logging import get_logger
 from app.core.redis import ping_redis
 from app.core.security import TokenPayload, decode_token
 from app.services.auth_service import AuthService
 from app.services.health_service import HealthService
+from app.services.rbac_service import RbacService
 
 _BEARER = HTTPBearer(auto_error=False)
+logger = get_logger(__name__)
 
 
 def get_settings_from_request(request: Request) -> Settings:
@@ -58,6 +66,10 @@ def get_auth_service(request: Request) -> AuthService:
     )
 
 
+def get_rbac_service(request: Request) -> RbacService:
+    return RbacService(database=get_database(request))
+
+
 async def get_current_auth(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_BEARER)],
     settings: Annotated[Settings, Depends(get_settings_from_request)],
@@ -70,3 +82,33 @@ async def get_current_auth(
     if await auth_store.is_access_token_revoked(payload.jti):
         raise AuthenticationError("Token has been revoked.")
     return payload
+
+
+def require_permission(
+    *required_permissions: str,
+) -> Callable[
+    [TokenPayload, RbacService],
+    Awaitable[TokenPayload],
+]:
+    """FastAPI dependency factory: enforces authentication + all listed RBAC permissions."""
+
+    async def _checker(
+        auth: Annotated[TokenPayload, Depends(get_current_auth)],
+        rbac: Annotated[RbacService, Depends(get_rbac_service)],
+    ) -> TokenPayload:
+        allowed = await rbac.user_has_permissions(
+            auth.tenant_id,
+            auth.sub,
+            required_permissions,
+        )
+        if not allowed:
+            logger.warning(
+                "permission_denied",
+                tenant_id=str(auth.tenant_id),
+                user_id=str(auth.sub),
+                required=list(required_permissions),
+            )
+            raise PermissionDeniedError
+        return auth
+
+    return _checker
