@@ -2,6 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type * as React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import { AppShell } from "@/components/layout/AppShell";
+import { AccountsPage } from "@/features/accounting/AccountsPage";
+import { JournalsPage } from "@/features/accounting/JournalsPage";
+import { TrialBalancePage } from "@/features/accounting/TrialBalancePage";
+import { AuditLogsPage } from "@/features/audit/AuditLogsPage";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { useAuthStore } from "@/features/auth/store";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
@@ -30,13 +35,18 @@ export function App(): React.JSX.Element {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route
-            path="/"
             element={
               <RequireAuth>
-                <DashboardPage />
+                <AppShell />
               </RequireAuth>
             }
-          />
+          >
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/accounting/accounts" element={<AccountsPage />} />
+            <Route path="/accounting/journals" element={<JournalsPage />} />
+            <Route path="/accounting/trial-balance" element={<TrialBalancePage />} />
+            <Route path="/audit-logs" element={<AuditLogsPage />} />
+          </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
