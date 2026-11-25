@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, FileText, Plus, Printer, X } from "lucide-react";
+import { Info, FileText, Plus, Printer, X } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -221,12 +221,12 @@ export function VatMushakPage(): React.JSX.Element {
             <>
               <div
                 role="note"
-                className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950"
+                className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4 text-sm text-foreground"
               >
-                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" aria-hidden="true" />
+                <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
                 <div>
                   <p className="font-semibold">{t("vat.advisoryTitle")}</p>
-                  <p className="mt-0.5 text-amber-900">{m91Query.data.advisory_note}</p>
+                  <p className="mt-0.5 text-muted-foreground">{m91Query.data.advisory_note}</p>
                 </div>
               </div>
 

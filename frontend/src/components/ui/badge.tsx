@@ -14,10 +14,10 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset",
         variant === "default"
-          ? "bg-primary/10 text-primary"
-          : "bg-secondary text-secondary-foreground",
+          ? "bg-primary/10 text-primary ring-primary/20"
+          : "bg-muted text-muted-foreground ring-border",
         className,
       )}
       {...props}

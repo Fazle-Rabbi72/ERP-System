@@ -1,13 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-  AlertTriangle,
   ArrowRight,
   Banknote,
   BarChart3,
   FileCheck2,
+  PackageSearch,
   Receipt,
+  Scale,
   ShoppingCart,
+  TrendingDown,
+  TrendingUp,
   Users,
+  Wallet,
   Warehouse,
 } from "lucide-react";
 import type * as React from "react";
@@ -19,6 +23,7 @@ import { ErrorState } from "@/components/states/ErrorState";
 import { TableSkeleton } from "@/components/states/TableSkeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatCard } from "@/components/ui/stat-card";
 import { useAuthStore } from "@/features/auth/store";
 import type { DashboardSummary } from "@/features/reports/types";
 import { apiRequest, type PaginatedResponse } from "@/lib/api";
@@ -59,190 +64,148 @@ export function DashboardPage(): React.JSX.Element {
   });
 
   const summary = summaryQuery.data;
+  const money = (value: string | undefined): string => formatBDT(value ?? "0.00", { banglaDigits });
+  const count = (n: number | undefined): string => {
+    const text = String(n ?? 0);
+    return banglaDigits ? toBanglaDigits(text) : text;
+  };
+
   const revNum = Number(summary?.total_revenue ?? 0);
   const expNum = Number(summary?.total_expense ?? 0);
   const totalFlow = revNum + expNum;
   const revPct = totalFlow > 0 ? Math.round((revNum / totalFlow) * 100) : 0;
 
-  const fmtCount = (n: number): string => (banglaDigits ? toBanglaDigits(String(n)) : String(n));
+  const shortcuts = [
+    { to: "/reports/statements", title: t("nav.financialStatements"), icon: BarChart3 },
+    { to: "/sales/invoices", title: t("nav.invoices"), icon: Receipt },
+    { to: "/purchase/bills", title: t("nav.bills"), icon: ShoppingCart },
+    { to: "/inventory/stock", title: t("nav.stock"), icon: Warehouse },
+    { to: "/vat/mushak", title: t("nav.vatMushak"), icon: FileCheck2 },
+    { to: "/hr/payroll", title: t("nav.payroll"), icon: Banknote },
+  ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          {t("dashboard.title")}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {t("dashboard.welcome")}, {user?.full_name ?? ""} ({user?.email ?? ""})
+        <h1 className="text-foreground">{t("dashboard.title")}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t("dashboard.welcome")}, {user?.full_name ?? ""}
         </p>
       </div>
 
-      {/* Executive Financial KPIs */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {t("reports.totalRevenue")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold tabular-nums text-emerald-700">
-              {formatBDT(summary?.total_revenue ?? "0.00", { banglaDigits })}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {t("reports.totalExpense")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold tabular-nums">
-              {formatBDT(summary?.total_expense ?? "0.00", { banglaDigits })}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {t("reports.netProfit")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold tabular-nums text-primary">
-              {formatBDT(summary?.net_profit ?? "0.00", { banglaDigits })}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {t("reports.totalAssets")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold tabular-nums">
-              {formatBDT(summary?.total_assets ?? "0.00", { banglaDigits })}
-            </p>
-          </CardContent>
-        </Card>
+      <section aria-label={t("dashboard.financialOverview")} className="space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {t("dashboard.financialOverview")}
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label={t("reports.totalRevenue")}
+            value={money(summary?.total_revenue)}
+            icon={TrendingUp}
+          />
+          <StatCard
+            label={t("reports.totalExpense")}
+            value={money(summary?.total_expense)}
+            icon={TrendingDown}
+          />
+          <StatCard
+            label={t("reports.netProfit")}
+            value={money(summary?.net_profit)}
+            icon={Scale}
+            emphasis
+          />
+          <StatCard
+            label={t("reports.totalAssets")}
+            value={money(summary?.total_assets)}
+            icon={Wallet}
+          />
+        </div>
       </section>
 
-      {/* Operational KPIs across Sales, Purchase, HR, Inventory */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium uppercase text-muted-foreground">
-              {t("dashboard.arDue")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl font-bold tabular-nums">
-              {formatBDT(summary?.accounts_receivable_due ?? "0.00", { banglaDigits })}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium uppercase text-muted-foreground">
-              {t("dashboard.apDue")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl font-bold tabular-nums">
-              {formatBDT(summary?.accounts_payable_due ?? "0.00", { banglaDigits })}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-1.5 text-xs font-medium uppercase text-muted-foreground">
-              <Users className="h-3.5 w-3.5" aria-hidden="true" />
-              {t("dashboard.activeEmployees")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl font-bold tabular-nums">
-              {fmtCount(summary?.active_employees_count ?? 0)}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-1.5 text-xs font-medium uppercase text-muted-foreground">
-              <AlertTriangle className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
-              {t("inventory.lowStockAlerts")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl font-bold tabular-nums">
-              {fmtCount(summary?.low_stock_products_count ?? 0)}
-            </p>
-          </CardContent>
-        </Card>
+      <section aria-label={t("dashboard.operations")} className="space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {t("dashboard.operations")}
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label={t("dashboard.arDue")}
+            value={money(summary?.accounts_receivable_due)}
+            icon={Receipt}
+          />
+          <StatCard
+            label={t("dashboard.apDue")}
+            value={money(summary?.accounts_payable_due)}
+            icon={ShoppingCart}
+          />
+          <StatCard
+            label={t("dashboard.activeEmployees")}
+            value={count(summary?.active_employees_count)}
+            icon={Users}
+          />
+          <StatCard
+            label={t("inventory.lowStockAlerts")}
+            value={count(summary?.low_stock_products_count)}
+            icon={PackageSearch}
+          />
+        </div>
       </section>
 
-      {/* Revenue vs Expense Visual Ratio */}
       {totalFlow > 0 ? (
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t("dashboard.revenueVsExpense")}</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle>{t("dashboard.revenueVsExpense")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex h-3 w-full overflow-hidden rounded-full bg-secondary">
+          <CardContent className="space-y-3">
+            <div
+              className="flex h-2.5 w-full overflow-hidden rounded-full bg-muted"
+              role="img"
+              aria-label={`${t("reports.totalRevenue")} ${String(revPct)}%, ${t("reports.totalExpense")} ${String(100 - revPct)}%`}
+            >
+              <div className="bg-primary transition-all" style={{ width: `${String(revPct)}%` }} />
               <div
-                className="bg-emerald-600 transition-all"
-                style={{ width: `${String(revPct)}%` }}
-              />
-              <div
-                className="bg-rose-500 transition-all"
+                className="bg-primary/25 transition-all"
                 style={{ width: `${String(100 - revPct)}%` }}
               />
             </div>
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>
-                {t("reports.totalRevenue")}: {revPct}%
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+                {t("reports.totalRevenue")} · {banglaDigits ? toBanglaDigits(String(revPct)) : revPct}%
               </span>
-              <span>
-                {t("reports.totalExpense")}: {100 - revPct}%
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-primary/25" aria-hidden="true" />
+                {t("reports.totalExpense")} ·{" "}
+                {banglaDigits ? toBanglaDigits(String(100 - revPct)) : 100 - revPct}%
               </span>
             </div>
           </CardContent>
         </Card>
       ) : null}
 
-      {/* ERP Quick Actions */}
-      <section aria-label={t("dashboard.quickActions")} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[
-          { to: "/reports/statements", title: t("nav.financialStatements"), icon: BarChart3 },
-          { to: "/sales/invoices", title: t("nav.invoices"), icon: Receipt },
-          { to: "/purchase/bills", title: t("nav.bills"), icon: ShoppingCart },
-          { to: "/inventory/stock", title: t("nav.stock"), icon: Warehouse },
-          { to: "/vat/mushak", title: t("nav.vatMushak"), icon: FileCheck2 },
-          { to: "/hr/payroll", title: t("nav.payroll"), icon: Banknote },
-        ].map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link key={item.to} to={item.to} className="group block">
-              <Card className="transition-colors group-hover:border-primary">
-                <CardContent className="flex items-center justify-between p-4">
-                  <div className="flex items-center gap-3">
-                    <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-                    <span className="text-sm font-semibold">{item.title}</span>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
+      <section aria-label={t("dashboard.quickActions")} className="space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {t("dashboard.quickActions")}
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {shortcuts.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.to} to={item.to} className="group block">
+                <Card className="transition-all group-hover:border-primary/40 group-hover:shadow-md">
+                  <CardContent className="flex items-center justify-between p-4 pt-4">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                      </span>
+                      <span className="text-sm font-medium">{item.title}</span>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
       </section>
 
       <Card>
@@ -267,19 +230,19 @@ export function DashboardPage(): React.JSX.Element {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-border text-xs uppercase text-muted-foreground">
+                <thead>
                   <tr>
-                    <th className="pb-2 pr-4">Code</th>
-                    <th className="pb-2 pr-4">Name</th>
-                    <th className="pb-2">Type</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Type</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {rolesQuery.data.items.map((role) => (
                     <tr key={role.id}>
-                      <td className="py-3 pr-4 font-mono text-xs">{role.code}</td>
-                      <td className="py-3 pr-4 font-medium">{role.name}</td>
-                      <td className="py-3">
+                      <td className="font-mono text-xs">{role.code}</td>
+                      <td className="font-medium">{role.name}</td>
+                      <td>
                         <Badge variant={role.is_system ? "default" : "secondary"}>
                           {role.is_system ? t("dashboard.systemRole") : t("dashboard.customRole")}
                         </Badge>

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, CheckCircle2, FileText, Plus, Printer, X } from "lucide-react";
+import { Info, CheckCircle2, FileText, Plus, Printer, X } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -359,9 +359,9 @@ export function PayrollPage(): React.JSX.Element {
               <div className="space-y-4">
                 <div
                   role="note"
-                  className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950"
+                  className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs text-foreground"
                 >
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                   <p>{detailQuery.data.advisory_note}</p>
                 </div>
                 <div className="overflow-x-auto">

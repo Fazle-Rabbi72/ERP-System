@@ -4,29 +4,104 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    --background: 220 23% 96.5%;
+    --foreground: 224 32% 14%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 215 80% 32%;
+    --card-foreground: 224 32% 14%;
+    --primary: 226 68% 38%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 20% 93%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 20% 94%;
-    --muted-foreground: 215 16% 38%;
-    --destructive: 0 72% 44%;
+    --secondary: 220 20% 94%;
+    --secondary-foreground: 224 32% 14%;
+    --muted: 220 18% 95%;
+    --muted-foreground: 220 10% 40%;
+    --destructive: 0 68% 42%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 20% 85%;
-    --input: 214 20% 80%;
-    --ring: 215 80% 38%;
+    --border: 220 16% 89%;
+    --input: 220 14% 80%;
+    --ring: 226 68% 45%;
+    --sidebar: 224 42% 11%;
+    --sidebar-foreground: 220 18% 78%;
+    --sidebar-accent: 224 32% 19%;
+    --sidebar-border: 224 28% 19%;
   }
 
   * {
     @apply border-border;
   }
 
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     @apply bg-background text-foreground;
-    font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Bengali", sans-serif;
+    font-family:
+      "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system,
+      "Noto Sans Bengali", "Nirmala UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  h1 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+
+  select {
+    @apply rounded-md border border-input bg-card text-sm text-foreground;
+  }
+
+  select:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2;
+  }
+}
+
+/* Consistent, professional data tables across every module. */
+main table > thead > tr > th {
+  padding: 0.625rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--muted));
+}
+
+main table > thead > tr > th:first-child {
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+main table > thead > tr > th:last-child {
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+main table > thead {
+  border-bottom: 0;
+}
+
+main table > tbody > tr > td,
+main table > tfoot > tr > td {
+  padding: 0.75rem;
+}
+
+main table > tbody > tr {
+  transition: background-color 120ms ease;
+}
+
+main table > tbody > tr:hover {
+  background: hsl(var(--muted) / 0.55);
+}
+
+@media print {
+  aside,
+  header {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
   }
 }

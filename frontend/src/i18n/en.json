@@ -25,7 +25,20 @@
     "payroll": "Payroll Runs",
     "auditLogs": "Audit Logs"
   },
+  "navGroup": {
+    "overview": "Overview",
+    "accounting": "Accounting",
+    "commercial": "Sales & Purchase",
+    "inventory": "Inventory",
+    "compliance": "Compliance",
+    "people": "People",
+    "system": "System"
+  },
   "auth": {
+    "brandHeadline": "Run your finance, stock and payroll on one secure platform.",
+    "feature1": "Double-entry accounting with an immutable audit trail",
+    "feature2": "Configurable VAT, TDS and Mushak reporting",
+    "feature3": "Role-based access with tenant-level data isolation",
     "title": "Sign in to Nexzen ERP",
     "subtitle": "Secure enterprise resource planning for Bangladeshi businesses",
     "tenantCode": "Company Code",
@@ -52,7 +65,9 @@
     "rolesEmptyTitle": "No roles found",
     "rolesEmptyDesc": "Create your first role to start assigning permissions.",
     "rolesErrorTitle": "Could not load roles",
-    "quickActions": "ERP Shortcuts",
+    "quickActions": "Quick Access",
+    "financialOverview": "Financial overview",
+    "operations": "Operations",
     "arDue": "Receivables Due (AR)",
     "apDue": "Payables Due (AP)",
     "activeEmployees": "Active Employees",
