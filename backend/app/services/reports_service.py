@@ -7,7 +7,12 @@ from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
 
 from app.core.db import Database
-from app.repositories.reports import AccountBalanceRow, OperationalKpiSnapshot, ReportsRepository
+from app.repositories.reports import (
+    AccountBalanceRow,
+    MonthlyFlowRow,
+    OperationalKpiSnapshot,
+    ReportsRepository,
+)
 
 ZERO = Decimal("0.00")
 TWO_PLACES = Decimal("0.01")
@@ -147,9 +152,12 @@ class ReportsService:
         self,
         *,
         tenant_id: uuid.UUID,
-    ) -> tuple[ProfitAndLossReport, BalanceSheetReport, OperationalKpiSnapshot]:
+    ) -> tuple[
+        ProfitAndLossReport, BalanceSheetReport, OperationalKpiSnapshot, list[MonthlyFlowRow]
+    ]:
         async with self._database.transaction(tenant_id) as session:
             repo = ReportsRepository(session, tenant_id)
             rows = await repo.ledger_balances()
             kpis = await repo.operational_kpis()
-            return build_profit_and_loss(rows), build_balance_sheet(rows), kpis
+            trend = await repo.monthly_revenue_expense(months=6)
+            return build_profit_and_loss(rows), build_balance_sheet(rows), kpis, trend

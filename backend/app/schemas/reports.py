@@ -61,6 +61,17 @@ class BalanceSheetResponse(BaseModel):
         return _fmt_money(value)
 
 
+class MonthlyTrendPointResponse(BaseModel):
+    month: str
+    revenue: Decimal
+    expense: Decimal
+    net_profit: Decimal
+
+    @field_serializer("revenue", "expense", "net_profit")
+    def _serialize_money(self, value: Decimal) -> str:
+        return _fmt_money(value)
+
+
 class DashboardSummaryResponse(BaseModel):
     total_revenue: Decimal
     total_expense: Decimal
@@ -72,6 +83,8 @@ class DashboardSummaryResponse(BaseModel):
     total_accounts_count: int
     active_employees_count: int
     low_stock_products_count: int
+    monthly_trend: list[MonthlyTrendPointResponse]
+    expense_breakdown: list[StatementLineResponse]
 
     @field_serializer(
         "total_revenue",

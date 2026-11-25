@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/features/auth/store";
@@ -160,6 +160,30 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
+const ALL_NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((g) => g.items);
+
+const MOBILE_BOTTOM_ITEMS: NavItem[] = [
+  { to: "/", labelKey: "nav.dashboard", icon: LayoutDashboard },
+  {
+    to: "/sales/invoices",
+    labelKey: "nav.invoices",
+    icon: Receipt,
+    permission: "sales.invoices.read",
+  },
+  {
+    to: "/inventory/stock",
+    labelKey: "nav.stock",
+    icon: Warehouse,
+    permission: "inventory.stock.read",
+  },
+  {
+    to: "/reports/statements",
+    labelKey: "nav.financialStatements",
+    icon: BarChart3,
+    permission: "accounting.reports.read",
+  },
+];
+
 function initialsOf(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) {
@@ -196,7 +220,7 @@ function SidebarNav({ groups, label, onNavigate }: SidebarNavProps): React.JSX.E
                     onClick={onNavigate}
                     className={({ isActive }) =>
                       cn(
-                        "group flex items-center gap-3 rounded-md px-3 py-2 text-[13px] font-medium transition-colors",
+                        "group flex min-h-[38px] items-center gap-3 rounded-md px-3 py-2 text-[13px] font-medium transition-all duration-150",
                         isActive
                           ? "bg-sidebar-accent text-white shadow-[inset_2px_0_0_0_hsl(var(--primary-foreground))]"
                           : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-white",
@@ -233,6 +257,7 @@ function BrandMark(): React.JSX.Element {
 
 export function AppShell(): React.JSX.Element {
   const { t, i18n } = useTranslation();
+  const location = useLocation();
   const user = useAuthStore((s) => s.user);
   const permissions = useAuthStore((s) => s.permissions);
   const banglaDigits = useAuthStore((s) => s.banglaDigits);
@@ -240,10 +265,39 @@ export function AppShell(): React.JSX.Element {
   const logout = useAuthStore((s) => s.logout);
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  // Smooth scroll to top when navigating between routes
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]);
+
+  // Close mobile drawer on Escape key & lock body scroll while open
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const onKeyDown = (e: KeyboardEvent): void => {
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+      }
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [mobileOpen]);
+
   const visibleGroups = NAV_GROUPS.map((group) => ({
     ...group,
     items: group.items.filter((item) => !item.permission || permissions.includes(item.permission)),
   })).filter((group) => group.items.length > 0);
+
+  const visibleBottomItems = MOBILE_BOTTOM_ITEMS.filter(
+    (item) => !item.permission || permissions.includes(item.permission),
+  );
+
+  const currentNavItem = ALL_NAV_ITEMS.find((item) => item.to === location.pathname);
+  const currentTitle = currentNavItem ? t(currentNavItem.labelKey) : t("app.name");
 
   const isBangla = i18n.language === "bn";
   const setLanguage = (lang: "bn" | "en"): void => {
@@ -267,7 +321,7 @@ export function AppShell(): React.JSX.Element {
           aria-label={t("app.logout")}
           title={t("app.logout")}
           onClick={() => void logout()}
-          className="rounded-md p-1.5 text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          className="rounded-md p-2 text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
         >
           <LogOut className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -291,65 +345,80 @@ export function AppShell(): React.JSX.Element {
         {userCard}
       </aside>
 
-      {/* Mobile Drawer */}
-      {mobileOpen ? (
-        <div className="fixed inset-0 z-40 flex lg:hidden">
-          <div
-            className="fixed inset-0 bg-foreground/40"
-            onClick={() => {
+      {/* Mobile Slide-Over Drawer */}
+      <div
+        className={cn(
+          "fixed inset-0 z-50 flex transition-opacity duration-200 lg:hidden",
+          mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
+        )}
+        aria-hidden={!mobileOpen}
+      >
+        <div
+          className="fixed inset-0 bg-foreground/40 backdrop-blur-[1px]"
+          onClick={() => {
+            setMobileOpen(false);
+          }}
+        />
+        <aside
+          className={cn(
+            "relative z-10 flex h-full w-72 max-w-[85vw] flex-col bg-sidebar shadow-2xl transition-transform duration-200 ease-out",
+            mobileOpen ? "translate-x-0" : "-translate-x-full",
+          )}
+        >
+          <div className="flex items-center justify-between pr-3">
+            <BrandMark />
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={() => {
+                setMobileOpen(false);
+              }}
+              className="rounded-md p-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <SidebarNav
+            groups={visibleGroups}
+            label="Mobile navigation"
+            onNavigate={() => {
               setMobileOpen(false);
             }}
           />
-          <aside className="relative z-50 flex h-full w-72 flex-col bg-sidebar shadow-xl">
-            <div className="flex items-center justify-between pr-3">
-              <BrandMark />
-              <button
-                type="button"
-                aria-label="Close menu"
-                onClick={() => {
-                  setMobileOpen(false);
-                }}
-                className="rounded-md p-1.5 text-sidebar-foreground hover:bg-sidebar-accent hover:text-white"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <SidebarNav
-              groups={visibleGroups}
-              label="Mobile navigation"
-              onNavigate={() => {
-                setMobileOpen(false);
-              }}
-            />
-            {userCard}
-          </aside>
-        </div>
-      ) : null}
+          {userCard}
+        </aside>
+      </div>
 
       {/* Main Column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card/90 px-4 backdrop-blur sm:px-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="lg:hidden"
-            aria-label="Open menu"
-            onClick={() => {
-              setMobileOpen(true);
-            }}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-2 border-b border-border bg-card/90 px-3 backdrop-blur sm:h-16 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-9 w-9 p-0 lg:hidden"
+              aria-label="Open menu"
+              onClick={() => {
+                setMobileOpen(true);
+              }}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <span className="truncate text-sm font-semibold tracking-tight text-foreground">
+              {currentTitle}
+            </span>
+          </div>
 
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
             <button
               type="button"
               role="switch"
               aria-checked={banglaDigits}
               onClick={toggleBanglaDigits}
-              className="flex items-center gap-2 rounded-md px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <span>{t("app.banglaDigits")}</span>
+              <span className="hidden sm:inline">{t("app.banglaDigits")}</span>
+              <span className="sm:hidden">১২৩</span>
               <span
                 className={cn(
                   "relative inline-flex h-5 w-9 items-center rounded-full transition-colors",
@@ -377,7 +446,7 @@ export function AppShell(): React.JSX.Element {
                   setLanguage("bn");
                 }}
                 className={cn(
-                  "rounded px-2.5 py-1 text-xs font-medium transition-colors",
+                  "rounded px-2 py-1 text-xs font-medium transition-colors sm:px-2.5",
                   isBangla
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:bg-muted",
@@ -392,22 +461,63 @@ export function AppShell(): React.JSX.Element {
                   setLanguage("en");
                 }}
                 className={cn(
-                  "rounded px-2.5 py-1 text-xs font-medium transition-colors",
+                  "rounded px-2 py-1 text-xs font-medium transition-colors sm:px-2.5",
                   !isBangla
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:bg-muted",
                 )}
               >
-                English
+                EN
               </button>
             </div>
           </div>
         </header>
 
-        <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8">
+        <main
+          id="main-content"
+          key={location.pathname}
+          className="page-enter mx-auto w-full max-w-7xl flex-1 p-4 pb-24 sm:p-6 lg:p-8 lg:pb-8"
+        >
           <Outlet />
         </main>
       </div>
+
+      {/* Mobile Bottom Quick Navigation Bar */}
+      <nav
+        data-mobile-bottom-nav="true"
+        aria-label="Mobile quick navigation"
+        className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-border bg-card/95 px-1 py-1.5 backdrop-blur lg:hidden"
+      >
+        {visibleBottomItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === "/"}
+              className={({ isActive }) =>
+                cn(
+                  "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-md px-1 py-1.5 text-[10px] font-medium transition-colors",
+                  isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
+                )
+              }
+            >
+              <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span className="max-w-full truncate">{t(item.labelKey)}</span>
+            </NavLink>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => {
+            setMobileOpen(true);
+          }}
+          className="flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-md px-1 py-1.5 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <Menu className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="truncate">{t("nav.more")}</span>
+        </button>
+      </nav>
     </div>
   );
 }

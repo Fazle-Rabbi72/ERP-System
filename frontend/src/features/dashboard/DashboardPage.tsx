@@ -23,8 +23,10 @@ import { ErrorState } from "@/components/states/ErrorState";
 import { TableSkeleton } from "@/components/states/TableSkeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { StatCard } from "@/components/ui/stat-card";
 import { useAuthStore } from "@/features/auth/store";
+import { DashboardCharts } from "@/features/dashboard/DashboardCharts";
 import type { DashboardSummary } from "@/features/reports/types";
 import { apiRequest, type PaginatedResponse } from "@/lib/api";
 import { formatBDT, toBanglaDigits } from "@/lib/format";
@@ -70,11 +72,6 @@ export function DashboardPage(): React.JSX.Element {
     return banglaDigits ? toBanglaDigits(text) : text;
   };
 
-  const revNum = Number(summary?.total_revenue ?? 0);
-  const expNum = Number(summary?.total_expense ?? 0);
-  const totalFlow = revNum + expNum;
-  const revPct = totalFlow > 0 ? Math.round((revNum / totalFlow) * 100) : 0;
-
   const shortcuts = [
     { to: "/reports/statements", title: t("nav.financialStatements"), icon: BarChart3 },
     { to: "/sales/invoices", title: t("nav.invoices"), icon: Receipt },
@@ -85,7 +82,7 @@ export function DashboardPage(): React.JSX.Element {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div>
         <h1 className="text-foreground">{t("dashboard.title")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -93,108 +90,98 @@ export function DashboardPage(): React.JSX.Element {
         </p>
       </div>
 
-      <section aria-label={t("dashboard.financialOverview")} className="space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {t("dashboard.financialOverview")}
-        </h2>
+      {summaryQuery.isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard
-            label={t("reports.totalRevenue")}
-            value={money(summary?.total_revenue)}
-            icon={TrendingUp}
-          />
-          <StatCard
-            label={t("reports.totalExpense")}
-            value={money(summary?.total_expense)}
-            icon={TrendingDown}
-          />
-          <StatCard
-            label={t("reports.netProfit")}
-            value={money(summary?.net_profit)}
-            icon={Scale}
-            emphasis
-          />
-          <StatCard
-            label={t("reports.totalAssets")}
-            value={money(summary?.total_assets)}
-            icon={Wallet}
-          />
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="p-5">
+              <Skeleton className="h-3.5 w-24" />
+              <Skeleton className="mt-3 h-7 w-36" />
+            </Card>
+          ))}
         </div>
-      </section>
-
-      <section aria-label={t("dashboard.operations")} className="space-y-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {t("dashboard.operations")}
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard
-            label={t("dashboard.arDue")}
-            value={money(summary?.accounts_receivable_due)}
-            icon={Receipt}
-          />
-          <StatCard
-            label={t("dashboard.apDue")}
-            value={money(summary?.accounts_payable_due)}
-            icon={ShoppingCart}
-          />
-          <StatCard
-            label={t("dashboard.activeEmployees")}
-            value={count(summary?.active_employees_count)}
-            icon={Users}
-          />
-          <StatCard
-            label={t("inventory.lowStockAlerts")}
-            value={count(summary?.low_stock_products_count)}
-            icon={PackageSearch}
-          />
-        </div>
-      </section>
-
-      {totalFlow > 0 ? (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle>{t("dashboard.revenueVsExpense")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div
-              className="flex h-2.5 w-full overflow-hidden rounded-full bg-muted"
-              role="img"
-              aria-label={`${t("reports.totalRevenue")} ${String(revPct)}%, ${t("reports.totalExpense")} ${String(100 - revPct)}%`}
-            >
-              <div className="bg-primary transition-all" style={{ width: `${String(revPct)}%` }} />
-              <div
-                className="bg-primary/25 transition-all"
-                style={{ width: `${String(100 - revPct)}%` }}
+      ) : summaryQuery.isError ? (
+        <ErrorState
+          title={t("reports.loadError")}
+          message={summaryQuery.error.message}
+          retryLabel={t("dashboard.retry")}
+          onRetry={() => void summaryQuery.refetch()}
+        />
+      ) : (
+        <>
+          <section aria-label={t("dashboard.financialOverview")} className="space-y-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("dashboard.financialOverview")}
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <StatCard
+                label={t("reports.totalRevenue")}
+                value={money(summary?.total_revenue)}
+                icon={TrendingUp}
+              />
+              <StatCard
+                label={t("reports.totalExpense")}
+                value={money(summary?.total_expense)}
+                icon={TrendingDown}
+              />
+              <StatCard
+                label={t("reports.netProfit")}
+                value={money(summary?.net_profit)}
+                icon={Scale}
+                emphasis
+              />
+              <StatCard
+                label={t("reports.totalAssets")}
+                value={money(summary?.total_assets)}
+                icon={Wallet}
               />
             </div>
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
-                {t("reports.totalRevenue")} · {banglaDigits ? toBanglaDigits(String(revPct)) : revPct}%
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-primary/25" aria-hidden="true" />
-                {t("reports.totalExpense")} ·{" "}
-                {banglaDigits ? toBanglaDigits(String(100 - revPct)) : 100 - revPct}%
-              </span>
+          </section>
+
+          {summary ? <DashboardCharts summary={summary} banglaDigits={banglaDigits} /> : null}
+
+          <section aria-label={t("dashboard.operations")} className="space-y-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("dashboard.operations")}
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <StatCard
+                label={t("dashboard.arDue")}
+                value={money(summary?.accounts_receivable_due)}
+                icon={Receipt}
+              />
+              <StatCard
+                label={t("dashboard.apDue")}
+                value={money(summary?.accounts_payable_due)}
+                icon={ShoppingCart}
+              />
+              <StatCard
+                label={t("dashboard.activeEmployees")}
+                value={count(summary?.active_employees_count)}
+                icon={Users}
+              />
+              <StatCard
+                label={t("inventory.lowStockAlerts")}
+                value={count(summary?.low_stock_products_count)}
+                icon={PackageSearch}
+              />
             </div>
-          </CardContent>
-        </Card>
-      ) : null}
+          </section>
+        </>
+      )}
 
       <section aria-label={t("dashboard.quickActions")} className="space-y-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {t("dashboard.quickActions")}
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {shortcuts.map((item) => {
             const Icon = item.icon;
             return (
               <Link key={item.to} to={item.to} className="group block">
-                <Card className="transition-all group-hover:border-primary/40 group-hover:shadow-md">
+                <Card className="transition-all duration-150 group-hover:-translate-y-0.5 group-hover:border-primary/40 group-hover:shadow-md">
                   <CardContent className="flex items-center justify-between p-4 pt-4">
                     <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                         <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
                       </span>
                       <span className="text-sm font-medium">{item.title}</span>

@@ -19,7 +19,7 @@ export function StatCard({
   emphasis = false,
 }: StatCardProps): React.JSX.Element {
   return (
-    <Card className="p-5">
+    <Card className="p-5 transition-all duration-150 hover:border-primary/30 hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -27,7 +27,7 @@ export function StatCard({
           </p>
           <p
             className={cn(
-              "mt-2 truncate text-2xl font-semibold tabular-nums tracking-tight",
+              "mt-2 truncate text-xl font-semibold tabular-nums tracking-tight sm:text-2xl",
               emphasis ? "text-primary" : "text-foreground",
             )}
           >

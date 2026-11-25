@@ -2,6 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Printer } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
@@ -165,6 +174,66 @@ export function FinancialStatementsPage(): React.JSX.Element {
               />
             ) : (
               <div className="space-y-6">
+                <div className="h-52 w-full print:hidden">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={[
+                        {
+                          name: t("reports.totalRevenue"),
+                          amount: Number(pnlQuery.data.total_revenue),
+                          fill: "#1e40af",
+                        },
+                        {
+                          name: t("reports.totalExpense"),
+                          amount: Number(pnlQuery.data.total_expense),
+                          fill: "#64748b",
+                        },
+                        {
+                          name: t("reports.netProfit"),
+                          amount: Number(pnlQuery.data.net_profit),
+                          fill: "#0f766e",
+                        },
+                      ]}
+                      margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
+                    >
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="hsl(var(--border))"
+                        vertical={false}
+                      />
+                      <XAxis
+                        dataKey="name"
+                        tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+                        axisLine={false}
+                        tickLine={false}
+                        width={64}
+                      />
+                      <Tooltip
+                        formatter={(
+                          val: number | string | ReadonlyArray<number | string> | undefined,
+                        ) => {
+                          const first: number | string | undefined = Array.isArray(val)
+                            ? (val as ReadonlyArray<number | string>)[0]
+                            : (val as number | string | undefined);
+                          return formatBDT(Number(first ?? 0).toFixed(2), { banglaDigits });
+                        }}
+                        contentStyle={{
+                          backgroundColor: "hsl(var(--card))",
+                          borderColor: "hsl(var(--border))",
+                          borderRadius: "0.5rem",
+                          fontSize: "12px",
+                        }}
+                      />
+                      <Bar dataKey="amount" radius={[6, 6, 0, 0]} maxBarSize={64} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
                 <div>
                   <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                     {t("reports.revenueSection")}

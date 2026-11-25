@@ -23,7 +23,8 @@
     "vatMushak": "ভ্যাট ও মূসক",
     "employees": "কর্মচারী তালিকা",
     "payroll": "মাসিক বেতন (Payroll)",
-    "auditLogs": "অডিট লগ"
+    "auditLogs": "অডিট লগ",
+    "more": "মেনু"
   },
   "navGroup": {
     "overview": "সারসংক্ষেপ",
@@ -72,6 +73,16 @@
     "apDue": "সাপ্লায়ার বকেয়া (AP)",
     "activeEmployees": "সক্রিয় কর্মচারী",
     "revenueVsExpense": "আয় বনাম ব্যয়ের অনুপাত",
+    "analyticsTitle": "আর্থিক অ্যানালিটিক্স",
+    "trendTitle": "মাসিক আয় ও ব্যয়ের গ্রাফ",
+    "trendSubtitle": "পোস্টকৃত জেনারেল লেজার থেকে মাসভিত্তিক তুলনা",
+    "chartArea": "এরিয়া",
+    "chartBar": "বার",
+    "expenseBreakdown": "ব্যয়ের বিভাজন",
+    "financialPosition": "আর্থিক অবস্থার অনুপাত",
+    "distributionSubtitle": "সক্রিয় হিসাব খাত অনুযায়ী বণ্টন",
+    "noChartData": "এখনো গ্রাফের তথ্য নেই",
+    "noChartDataDesc": "গ্রাফ দেখতে ইনভয়েস, পারচেজ বিল বা জার্নাল পোস্ট করুন।",
     "retry": "আবার চেষ্টা করুন",
     "systemRole": "সিস্টেম",
     "customRole": "কাস্টম"

@@ -30,6 +30,13 @@ class AccountBalanceRow:
 
 
 @dataclass(frozen=True, slots=True)
+class MonthlyFlowRow:
+    month_label: str
+    revenue: Decimal
+    expense: Decimal
+
+
+@dataclass(frozen=True, slots=True)
 class OperationalKpiSnapshot:
     total_accounts_count: int
     accounts_receivable_due: Decimal
@@ -186,3 +193,49 @@ class ReportsRepository:
             active_employees_count=emp_count,
             low_stock_products_count=low_stock_count,
         )
+
+    async def monthly_revenue_expense(self, *, months: int = 6) -> list[MonthlyFlowRow]:
+        """Aggregate posted Revenue & Expense by YYYY-MM for executive trend charts."""
+        month_expr = func.to_char(JournalEntry.entry_date, "YYYY-MM")
+        stmt = (
+            select(
+                month_expr.label("ym"),
+                Account.account_type,
+                func.coalesce(func.sum(JournalLine.debit), ZERO).label("total_debit"),
+                func.coalesce(func.sum(JournalLine.credit), ZERO).label("total_credit"),
+            )
+            .join(JournalLine, JournalLine.account_id == Account.id)
+            .join(JournalEntry, JournalEntry.id == JournalLine.journal_entry_id)
+            .where(
+                Account.tenant_id == self._tenant_id,
+                Account.is_deleted.is_(False),
+                Account.account_type.in_(("revenue", "expense")),
+                JournalLine.tenant_id == self._tenant_id,
+                JournalLine.is_deleted.is_(False),
+                JournalEntry.tenant_id == self._tenant_id,
+                JournalEntry.is_deleted.is_(False),
+                JournalEntry.status.in_(POSTED_JOURNAL_STATUSES),
+            )
+            .group_by(month_expr, Account.account_type)
+            .order_by(month_expr.asc())
+        )
+        rows = (await self._session.execute(stmt)).all()
+        buckets: dict[str, tuple[Decimal, Decimal]] = {}
+        for r in rows:
+            ym = str(r.ym)
+            rev, exp = buckets.get(ym, (ZERO, ZERO))
+            if r.account_type == "revenue":
+                rev += Decimal(r.total_credit) - Decimal(r.total_debit)
+            elif r.account_type == "expense":
+                exp += Decimal(r.total_debit) - Decimal(r.total_credit)
+            buckets[ym] = (rev, exp)
+
+        sorted_keys = sorted(buckets.keys())[-months:]
+        return [
+            MonthlyFlowRow(
+                month_label=ym,
+                revenue=buckets[ym][0],
+                expense=buckets[ym][1],
+            )
+            for ym in sorted_keys
+        ]

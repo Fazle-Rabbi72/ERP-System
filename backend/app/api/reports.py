@@ -11,6 +11,7 @@ from app.core.security import TokenPayload
 from app.schemas.reports import (
     BalanceSheetResponse,
     DashboardSummaryResponse,
+    MonthlyTrendPointResponse,
     ProfitAndLossResponse,
     StatementLineResponse,
 )
@@ -78,7 +79,7 @@ async def get_dashboard_summary(
     auth: Annotated[TokenPayload, Depends(require_permission(PERM_ACCOUNTING_REPORTS_READ))],
     service: Annotated[ReportsService, Depends(get_reports_service)],
 ) -> DashboardSummaryResponse:
-    pnl, bs, kpis = await service.dashboard_summary(tenant_id=auth.tenant_id)
+    pnl, bs, kpis, trend = await service.dashboard_summary(tenant_id=auth.tenant_id)
     return DashboardSummaryResponse(
         total_revenue=pnl.total_revenue,
         total_expense=pnl.total_expense,
@@ -90,4 +91,14 @@ async def get_dashboard_summary(
         total_accounts_count=kpis.total_accounts_count,
         active_employees_count=kpis.active_employees_count,
         low_stock_products_count=kpis.low_stock_products_count,
+        monthly_trend=[
+            MonthlyTrendPointResponse(
+                month=pt.month_label,
+                revenue=pt.revenue,
+                expense=pt.expense,
+                net_profit=pt.revenue - pt.expense,
+            )
+            for pt in trend
+        ],
+        expense_breakdown=_map_lines(pnl.expense_lines),
     )

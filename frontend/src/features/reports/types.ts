@@ -28,6 +28,13 @@ export interface BalanceSheetReport {
   is_balanced: boolean;
 }
 
+export interface MonthlyTrendPoint {
+  month: string;
+  revenue: string;
+  expense: string;
+  net_profit: string;
+}
+
 export interface DashboardSummary {
   total_revenue: string;
   total_expense: string;
@@ -39,4 +46,6 @@ export interface DashboardSummary {
   total_accounts_count: number;
   active_employees_count: number;
   low_stock_products_count: number;
+  monthly_trend: MonthlyTrendPoint[];
+  expense_breakdown: StatementLine[];
 }

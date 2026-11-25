@@ -23,7 +23,8 @@
     "vatMushak": "VAT & Mushak",
     "employees": "Employees",
     "payroll": "Payroll Runs",
-    "auditLogs": "Audit Logs"
+    "auditLogs": "Audit Logs",
+    "more": "Menu"
   },
   "navGroup": {
     "overview": "Overview",
@@ -72,6 +73,16 @@
     "apDue": "Payables Due (AP)",
     "activeEmployees": "Active Employees",
     "revenueVsExpense": "Revenue vs. Expense Ratio",
+    "analyticsTitle": "Financial Analytics",
+    "trendTitle": "Revenue vs. Expense Trend",
+    "trendSubtitle": "Monthly posted General Ledger cashflow summary",
+    "chartArea": "Area",
+    "chartBar": "Bar",
+    "expenseBreakdown": "Expense Breakdown",
+    "financialPosition": "Financial Position Mix",
+    "distributionSubtitle": "Share across active accounts",
+    "noChartData": "No chart data yet",
+    "noChartDataDesc": "Post sales invoices, purchase bills, or journals to visualize financial trends.",
     "retry": "Try again",
     "systemRole": "System",
     "customRole": "Custom"
