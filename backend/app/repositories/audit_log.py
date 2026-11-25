@@ -59,4 +59,3 @@ class AuditLogRepository:
         stmt = stmt.offset(offset).limit(limit)
         rows = list((await self._session.execute(stmt)).scalars().all())
         return rows, total
-

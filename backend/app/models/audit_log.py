@@ -26,9 +26,8 @@ class AuditLog(TenantBaseModel):
     )
     action: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     resource_type: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
-    resource_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    resource_id: Mapped[str | None] = mapped_column(String(128), nullable=True, index=True)
     before_data: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
     after_data: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
     request_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
     ip_address: Mapped[str | None] = mapped_column(String(64), nullable=True)
-

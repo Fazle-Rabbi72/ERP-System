@@ -20,4 +20,3 @@ class AuditLogResponse(BaseModel):
     request_id: str | None
     ip_address: str | None
     created_at: datetime
-

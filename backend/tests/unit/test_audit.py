@@ -49,4 +49,3 @@ def test_audit_repository_is_strictly_append_only() -> None:
     assert not hasattr(AuditLogRepository, "update")
     assert not hasattr(AuditLogRepository, "soft_delete")
     assert not hasattr(AuditLogRepository, "delete")
-

@@ -65,8 +65,11 @@ class Database:
     """Owns the engine and hands out transactional sessions."""
 
     def __init__(self, settings: Settings) -> None:
+        # Transaction-mode poolers (e.g. Neon "-pooler") must not cache prepared
+        # statements across connections, especially across schema migrations.
+        cache_size = 0 if "-pooler" in settings.db_host else settings.db_statement_cache_size
         connect_args: dict[str, object] = {
-            "statement_cache_size": settings.db_statement_cache_size,
+            "statement_cache_size": cache_size,
         }
         ssl_context = build_ssl_context(settings.db_ssl_mode)
         if ssl_context is not None:
