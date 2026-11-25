@@ -38,6 +38,14 @@ PERM_SALES_INVOICES_WRITE = "sales.invoices.write"
 PERM_SALES_INVOICES_POST = "sales.invoices.post"
 PERM_SALES_PAYMENTS_WRITE = "sales.payments.write"
 
+# M3 Purchase & Supplier permission codes
+PERM_PURCHASE_SUPPLIERS_READ = "purchase.suppliers.read"
+PERM_PURCHASE_SUPPLIERS_WRITE = "purchase.suppliers.write"
+PERM_PURCHASE_BILLS_READ = "purchase.bills.read"
+PERM_PURCHASE_BILLS_WRITE = "purchase.bills.write"
+PERM_PURCHASE_BILLS_POST = "purchase.bills.post"
+PERM_PURCHASE_PAYMENTS_WRITE = "purchase.payments.write"
+
 BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_RBAC_ROLES_READ, "rbac", "View roles and permissions"),
     PermissionDef(PERM_RBAC_ROLES_WRITE, "rbac", "Create and modify roles"),
@@ -57,6 +65,12 @@ BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_SALES_INVOICES_WRITE, "sales", "Create draft sales invoices"),
     PermissionDef(PERM_SALES_INVOICES_POST, "sales", "Post sales invoices to GL"),
     PermissionDef(PERM_SALES_PAYMENTS_WRITE, "sales", "Record customer payments"),
+    PermissionDef(PERM_PURCHASE_SUPPLIERS_READ, "purchase", "View suppliers"),
+    PermissionDef(PERM_PURCHASE_SUPPLIERS_WRITE, "purchase", "Create and manage suppliers"),
+    PermissionDef(PERM_PURCHASE_BILLS_READ, "purchase", "View purchase bills"),
+    PermissionDef(PERM_PURCHASE_BILLS_WRITE, "purchase", "Create draft purchase bills"),
+    PermissionDef(PERM_PURCHASE_BILLS_POST, "purchase", "Post purchase bills to GL"),
+    PermissionDef(PERM_PURCHASE_PAYMENTS_WRITE, "purchase", "Record supplier payments"),
 )
 
 ALL_BASELINE_CODES: tuple[str, ...] = tuple(p.code for p in BASELINE_PERMISSIONS)
@@ -90,6 +104,8 @@ BASELINE_ROLES: tuple[SystemRoleDef, ...] = (
             PERM_ACCOUNTING_REPORTS_READ,
             PERM_SALES_CUSTOMERS_READ,
             PERM_SALES_INVOICES_READ,
+            PERM_PURCHASE_SUPPLIERS_READ,
+            PERM_PURCHASE_BILLS_READ,
         ),
     ),
     SystemRoleDef(

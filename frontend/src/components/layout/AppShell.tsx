@@ -9,6 +9,8 @@ import {
   Receipt,
   Scale,
   ShieldAlert,
+  ShoppingCart,
+  Truck,
   Users,
   X,
 } from "lucide-react";
@@ -58,6 +60,18 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.invoices",
     icon: Receipt,
     permission: "sales.invoices.read",
+  },
+  {
+    to: "/purchase/suppliers",
+    labelKey: "nav.suppliers",
+    icon: Truck,
+    permission: "purchase.suppliers.read",
+  },
+  {
+    to: "/purchase/bills",
+    labelKey: "nav.bills",
+    icon: ShoppingCart,
+    permission: "purchase.bills.read",
   },
   {
     to: "/audit-logs",
