@@ -1,0 +1,42 @@
+{
+  "app": {
+    "name": "নেক্সজেন ইআরপি",
+    "vendor": "নেক্সজেন সলিউশন লিমিটেড",
+    "skipToContent": "মূল অংশে যান",
+    "language": "ভাষা",
+    "banglaDigits": "বাংলা ডিজিট",
+    "logout": "লগ আউট"
+  },
+  "auth": {
+    "title": "নেক্সজেন ইআরপি-তে লগইন করুন",
+    "subtitle": "বাংলাদেশের ব্যবসার জন্য নিরাপদ ও আধুনিক ইআরপি",
+    "tenantCode": "কোম্পানি কোড",
+    "tenantCodePlaceholder": "যেমন: nexzen-demo",
+    "email": "ইমেইল ঠিকানা",
+    "emailPlaceholder": "admin@company.com",
+    "password": "পাসওয়ার্ড",
+    "otpCode": "অথেনটিকেটর কোড (ঐচ্ছিক)",
+    "otpPlaceholder": "৬ অঙ্কের কোড",
+    "signIn": "লগইন করুন",
+    "signingIn": "লগইন হচ্ছে...",
+    "validation": {
+      "email": "সঠিক ইমেইল ঠিকানা দিন",
+      "password": "পাসওয়ার্ড দেওয়া বাধ্যতামূলক",
+      "otp": "ওটিপি ৬ অঙ্কের হতে হবে"
+    }
+  },
+  "dashboard": {
+    "title": "ড্যাশবোর্ড",
+    "welcome": "স্বাগতম",
+    "sampleMetrics": "আর্থিক সারসংক্ষেপ (টাকা লাখ/কোটি ফরম্যাট)",
+    "cashBalance": "নগদ ও ব্যাংক ব্যালেন্স",
+    "monthlySales": "মাসিক বিক্রয় (ভ্যাটসহ)",
+    "rolesTitle": "সিস্টেম রোলসমূহ (RBAC)",
+    "rolesEmptyTitle": "কোনো রোল পাওয়া যায়নি",
+    "rolesEmptyDesc": "অনুমতি নির্ধারণের জন্য প্রথম রোল তৈরি করুন।",
+    "rolesErrorTitle": "রোল তালিকা লোড করা যায়নি",
+    "retry": "আবার চেষ্টা করুন",
+    "systemRole": "সিস্টেম",
+    "customRole": "কাস্টম"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "app": {
+    "name": "Nexzen ERP",
+    "vendor": "Nexzen Solution Ltd.",
+    "skipToContent": "Skip to main content",
+    "language": "Language",
+    "banglaDigits": "বাংলা ডিজিট",
+    "logout": "Sign out"
+  },
+  "auth": {
+    "title": "Sign in to Nexzen ERP",
+    "subtitle": "Secure enterprise resource planning for Bangladeshi businesses",
+    "tenantCode": "Company Code",
+    "tenantCodePlaceholder": "e.g. nexzen-demo",
+    "email": "Email Address",
+    "emailPlaceholder": "admin@company.com",
+    "password": "Password",
+    "otpCode": "Authenticator Code (Optional)",
+    "otpPlaceholder": "6-digit code",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "validation": {
+      "email": "Enter a valid email address",
+      "password": "Password is required",
+      "otp": "OTP must be 6 digits"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "sampleMetrics": "Financial Snapshot (BDT Lakh/Crore Preview)",
+    "cashBalance": "Cash & Bank Balance",
+    "monthlySales": "Monthly Sales (Incl. VAT)",
+    "rolesTitle": "Configured Roles (RBAC)",
+    "rolesEmptyTitle": "No roles found",
+    "rolesEmptyDesc": "Create your first role to start assigning permissions.",
+    "rolesErrorTitle": "Could not load roles",
+    "retry": "Try again",
+    "systemRole": "System",
+    "customRole": "Custom"
+  }
+}
