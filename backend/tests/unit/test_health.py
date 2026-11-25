@@ -3,7 +3,6 @@ import pytest
 from fastapi import FastAPI
 
 from app.core.db import Database
-from app.core.exceptions import ServiceUnavailableError
 from app.main import create_app
 from tests.factories import make_settings
 
@@ -71,11 +70,12 @@ async def test_ready_ok_when_all_up(monkeypatch: pytest.MonkeyPatch) -> None:
 
 async def test_ready_fails_closed_when_state_missing() -> None:
     app = create_app(make_settings())
-    # The central handler that maps this to a JSON 503 is added in F4; until then
-    # the error must surface as ServiceUnavailableError rather than a fake "ok".
     async with _client(app) as client:
-        with pytest.raises(ServiceUnavailableError):
-            await client.get("/health/ready")
+        response = await client.get("/health/ready")
+    assert response.status_code == 503
+    body = response.json()
+    assert body["error"]["code"] == "service_unavailable"
+    assert body["error"]["request_id"] == response.headers["x-request-id"]
 
 
 def test_docs_hidden_in_production() -> None:

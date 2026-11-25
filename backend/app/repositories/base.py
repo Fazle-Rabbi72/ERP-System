@@ -12,6 +12,7 @@ from datetime import UTC, datetime
 from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.elements import ColumnElement
+from sqlalchemy.sql.roles import ExpressionElementRole
 
 from app.core.exceptions import PermissionDeniedError
 from app.models.base import TenantBaseModel
@@ -56,7 +57,7 @@ class BaseRepository[ModelT: TenantBaseModel]:
         offset: int = 0,
         limit: int = 50,
         filters: Sequence[ColumnElement[bool]] | None = None,
-        order_by: Sequence[ColumnElement[object]] | None = None,
+        order_by: Sequence[ExpressionElementRole[object]] | None = None,
         include_deleted: bool = False,
     ) -> tuple[list[ModelT], int]:
         """Return a page of entities and the total matching count."""

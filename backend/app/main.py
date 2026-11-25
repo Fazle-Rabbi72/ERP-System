@@ -10,7 +10,9 @@ from app import __version__
 from app.api import health
 from app.core.config import Settings, get_settings
 from app.core.db import Database
+from app.core.error_handlers import register_error_handlers
 from app.core.logging import configure_logging, get_logger
+from app.core.middleware import RequestContextMiddleware
 from app.core.redis import create_redis
 
 
@@ -53,7 +55,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_origins=active.cors_allowed_origins,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=["Authorization", "Content-Type", "Accept-Language"],
+        allow_headers=["Authorization", "Content-Type", "Accept-Language", "X-Request-ID"],
+        expose_headers=["X-Request-ID"],
     )
+    app.add_middleware(RequestContextMiddleware)
+    register_error_handlers(app)
     app.include_router(health.router)
     return app
