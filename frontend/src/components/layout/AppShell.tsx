@@ -6,12 +6,14 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Package,
   Receipt,
   Scale,
   ShieldAlert,
   ShoppingCart,
   Truck,
   Users,
+  Warehouse,
   X,
 } from "lucide-react";
 import * as React from "react";
@@ -72,6 +74,18 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.bills",
     icon: ShoppingCart,
     permission: "purchase.bills.read",
+  },
+  {
+    to: "/inventory/catalog",
+    labelKey: "nav.catalog",
+    icon: Package,
+    permission: "inventory.products.read",
+  },
+  {
+    to: "/inventory/stock",
+    labelKey: "nav.stock",
+    icon: Warehouse,
+    permission: "inventory.stock.read",
   },
   {
     to: "/audit-logs",

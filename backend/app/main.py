@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
-from app.api import accounting, audit, auth, health, purchase, rbac, sales
+from app.api import accounting, audit, auth, health, inventory, purchase, rbac, sales
 from app.core.config import Settings, get_settings
 from app.core.db import Database
 from app.core.error_handlers import register_error_handlers
@@ -67,4 +67,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(accounting.router, prefix=active.api_prefix)
     app.include_router(sales.router, prefix=active.api_prefix)
     app.include_router(purchase.router, prefix=active.api_prefix)
+    app.include_router(inventory.router, prefix=active.api_prefix)
     return app

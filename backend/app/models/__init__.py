@@ -3,6 +3,7 @@
 from app.models.accounting import Account, JournalEntry, JournalLine
 from app.models.audit_log import AuditLog
 from app.models.base import MONEY_TYPE, Base, TenantBaseModel
+from app.models.inventory import Product, StockMovement, Warehouse
 from app.models.purchase import PurchaseBill, PurchaseBillLine, Supplier, SupplierPayment
 from app.models.rbac import Permission, Role, RolePermission, UserRole
 from app.models.refresh_token import RefreshToken
@@ -20,6 +21,7 @@ __all__ = [
     "JournalEntry",
     "JournalLine",
     "Permission",
+    "Product",
     "PurchaseBill",
     "PurchaseBillLine",
     "RefreshToken",
@@ -27,10 +29,12 @@ __all__ = [
     "RolePermission",
     "SalesInvoice",
     "SalesInvoiceLine",
+    "StockMovement",
     "Supplier",
     "SupplierPayment",
     "Tenant",
     "TenantBaseModel",
     "User",
     "UserRole",
+    "Warehouse",
 ]

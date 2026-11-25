@@ -46,6 +46,14 @@ PERM_PURCHASE_BILLS_WRITE = "purchase.bills.write"
 PERM_PURCHASE_BILLS_POST = "purchase.bills.post"
 PERM_PURCHASE_PAYMENTS_WRITE = "purchase.payments.write"
 
+# M4 Inventory & Warehouse permission codes
+PERM_INVENTORY_PRODUCTS_READ = "inventory.products.read"
+PERM_INVENTORY_PRODUCTS_WRITE = "inventory.products.write"
+PERM_INVENTORY_WAREHOUSES_READ = "inventory.warehouses.read"
+PERM_INVENTORY_WAREHOUSES_WRITE = "inventory.warehouses.write"
+PERM_INVENTORY_STOCK_READ = "inventory.stock.read"
+PERM_INVENTORY_STOCK_MOVE = "inventory.stock.move"
+
 BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_RBAC_ROLES_READ, "rbac", "View roles and permissions"),
     PermissionDef(PERM_RBAC_ROLES_WRITE, "rbac", "Create and modify roles"),
@@ -71,6 +79,12 @@ BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_PURCHASE_BILLS_WRITE, "purchase", "Create draft purchase bills"),
     PermissionDef(PERM_PURCHASE_BILLS_POST, "purchase", "Post purchase bills to GL"),
     PermissionDef(PERM_PURCHASE_PAYMENTS_WRITE, "purchase", "Record supplier payments"),
+    PermissionDef(PERM_INVENTORY_PRODUCTS_READ, "inventory", "View products catalog"),
+    PermissionDef(PERM_INVENTORY_PRODUCTS_WRITE, "inventory", "Create and manage products"),
+    PermissionDef(PERM_INVENTORY_WAREHOUSES_READ, "inventory", "View warehouses"),
+    PermissionDef(PERM_INVENTORY_WAREHOUSES_WRITE, "inventory", "Create and manage warehouses"),
+    PermissionDef(PERM_INVENTORY_STOCK_READ, "inventory", "View stock levels and movements"),
+    PermissionDef(PERM_INVENTORY_STOCK_MOVE, "inventory", "Record stock in/out/adjustment"),
 )
 
 ALL_BASELINE_CODES: tuple[str, ...] = tuple(p.code for p in BASELINE_PERMISSIONS)
@@ -106,6 +120,9 @@ BASELINE_ROLES: tuple[SystemRoleDef, ...] = (
             PERM_SALES_INVOICES_READ,
             PERM_PURCHASE_SUPPLIERS_READ,
             PERM_PURCHASE_BILLS_READ,
+            PERM_INVENTORY_PRODUCTS_READ,
+            PERM_INVENTORY_WAREHOUSES_READ,
+            PERM_INVENTORY_STOCK_READ,
         ),
     ),
     SystemRoleDef(
