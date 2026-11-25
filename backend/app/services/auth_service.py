@@ -35,6 +35,7 @@ from app.models.tenant import Tenant
 from app.models.user import User
 from app.repositories.refresh_token import RefreshTokenRepository
 from app.repositories.user import UserRepository
+from app.services.audit_service import record_audit
 
 logger = get_logger(__name__)
 
@@ -187,6 +188,15 @@ class AuthService:
             await user_repo.update(user, actor_id=user.id)
 
             pair, _ = await self._mint_and_store_tokens(user=user, refresh_repo=refresh_repo)
+            await record_audit(
+                session,
+                tenant_id=tenant_id,
+                actor_id=user.id,
+                action="auth.login.succeeded",
+                resource_type="user",
+                resource_id=user.id,
+                after_data={"email": user.email, "mfa_used": user.mfa_enabled},
+            )
 
         await self._store.clear_failed_attempts(tenant_id, normalised_email)
         logger.info("login_succeeded", tenant_id=str(tenant_id), user_id=str(user.id))
@@ -313,6 +323,16 @@ class AuthService:
                 raise AuthenticationError("Invalid MFA verification code.")
             user.mfa_enabled = True
             updated = await user_repo.update(user, actor_id=user.id)
+            await record_audit(
+                session,
+                tenant_id=payload.tenant_id,
+                actor_id=user.id,
+                action="auth.mfa.enabled",
+                resource_type="user",
+                resource_id=user.id,
+                before_data={"mfa_enabled": False},
+                after_data={"mfa_enabled": True},
+            )
         logger.info("mfa_enabled", tenant_id=str(payload.tenant_id), user_id=str(payload.sub))
         return updated
 
@@ -337,5 +357,15 @@ class AuthService:
             user.mfa_enabled = False
             user.mfa_secret = None
             updated = await user_repo.update(user, actor_id=user.id)
+            await record_audit(
+                session,
+                tenant_id=payload.tenant_id,
+                actor_id=user.id,
+                action="auth.mfa.disabled",
+                resource_type="user",
+                resource_id=user.id,
+                before_data={"mfa_enabled": True},
+                after_data={"mfa_enabled": False},
+            )
         logger.info("mfa_disabled", tenant_id=str(payload.tenant_id), user_id=str(payload.sub))
         return updated

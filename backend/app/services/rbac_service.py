@@ -19,6 +19,7 @@ from app.core.query import (
 from app.models.rbac import Permission, Role
 from app.repositories.rbac import PermissionRepository, RoleRepository
 from app.repositories.user import UserRepository
+from app.services.audit_service import record_audit
 
 logger = get_logger(__name__)
 
@@ -175,6 +176,19 @@ class RbacService:
                 actor_id=actor_id,
             )
             await role_repo.attach_permissions(role.id, [p.id for p in perms], actor_id=actor_id)
+            await record_audit(
+                session,
+                tenant_id=tenant_id,
+                actor_id=actor_id,
+                action="rbac.role.created",
+                resource_type="role",
+                resource_id=role.id,
+                after_data={
+                    "code": role.code,
+                    "name": role.name,
+                    "permissions": unique_codes,
+                },
+            )
         logger.info(
             "role_created", tenant_id=str(tenant_id), actor_id=str(actor_id), role=role.code
         )
@@ -197,6 +211,15 @@ class RbacService:
             if role is None:
                 raise NotFoundError("Role not found.")
             await role_repo.assign_to_user(user_id, role_id, actor_id=actor_id)
+            await record_audit(
+                session,
+                tenant_id=tenant_id,
+                actor_id=actor_id,
+                action="rbac.role.assigned",
+                resource_type="user_role",
+                resource_id=f"{user_id}:{role_id}",
+                after_data={"user_id": user_id, "role_id": role_id, "role_code": role.code},
+            )
         logger.info(
             "role_assigned",
             tenant_id=str(tenant_id),
@@ -221,6 +244,15 @@ class RbacService:
             )
             if not revoked:
                 raise NotFoundError("Role assignment not found.")
+            await record_audit(
+                session,
+                tenant_id=tenant_id,
+                actor_id=actor_id,
+                action="rbac.role.revoked",
+                resource_type="user_role",
+                resource_id=f"{user_id}:{role_id}",
+                before_data={"user_id": user_id, "role_id": role_id},
+            )
         logger.info(
             "role_revoked",
             tenant_id=str(tenant_id),

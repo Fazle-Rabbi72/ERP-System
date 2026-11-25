@@ -19,6 +19,7 @@ from app.core.exceptions import (
 from app.core.logging import get_logger
 from app.core.redis import ping_redis
 from app.core.security import TokenPayload, decode_token
+from app.services.audit_service import AuditService
 from app.services.auth_service import AuthService
 from app.services.health_service import HealthService
 from app.services.rbac_service import RbacService
@@ -68,6 +69,10 @@ def get_auth_service(request: Request) -> AuthService:
 
 def get_rbac_service(request: Request) -> RbacService:
     return RbacService(database=get_database(request))
+
+
+def get_audit_service(request: Request) -> AuditService:
+    return AuditService(database=get_database(request))
 
 
 async def get_current_auth(
