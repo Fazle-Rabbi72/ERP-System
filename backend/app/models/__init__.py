@@ -3,6 +3,7 @@
 from app.models.accounting import Account, JournalEntry, JournalLine
 from app.models.audit_log import AuditLog
 from app.models.base import MONEY_TYPE, Base, TenantBaseModel
+from app.models.hr import Employee, PayrollLine, PayrollRun
 from app.models.inventory import Product, StockMovement, Warehouse
 from app.models.purchase import PurchaseBill, PurchaseBillLine, Supplier, SupplierPayment
 from app.models.rbac import Permission, Role, RolePermission, UserRole
@@ -19,8 +20,11 @@ __all__ = [
     "Base",
     "Customer",
     "CustomerPayment",
+    "Employee",
     "JournalEntry",
     "JournalLine",
+    "PayrollLine",
+    "PayrollRun",
     "Permission",
     "Product",
     "PurchaseBill",

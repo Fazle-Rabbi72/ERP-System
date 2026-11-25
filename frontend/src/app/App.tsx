@@ -11,6 +11,8 @@ import { AuditLogsPage } from "@/features/audit/AuditLogsPage";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { useAuthStore } from "@/features/auth/store";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
+import { EmployeesPage } from "@/features/hr/EmployeesPage";
+import { PayrollPage } from "@/features/hr/PayrollPage";
 import { CatalogPage } from "@/features/inventory/CatalogPage";
 import { StockPage } from "@/features/inventory/StockPage";
 import { BillsPage } from "@/features/purchase/BillsPage";
@@ -75,6 +77,8 @@ export function App(): React.JSX.Element {
             <Route path="/inventory/catalog" element={<CatalogPage />} />
             <Route path="/inventory/stock" element={<StockPage />} />
             <Route path="/vat/mushak" element={<VatMushakPage />} />
+            <Route path="/hr/employees" element={<EmployeesPage />} />
+            <Route path="/hr/payroll" element={<PayrollPage />} />
             <Route path="/audit-logs" element={<AuditLogsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

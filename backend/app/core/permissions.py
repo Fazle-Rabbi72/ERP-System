@@ -59,6 +59,13 @@ PERM_VAT_RATES_READ = "vat.rates.read"
 PERM_VAT_RATES_WRITE = "vat.rates.write"
 PERM_VAT_REPORTS_READ = "vat.reports.read"
 
+# M6 HR & Payroll permission codes
+PERM_HR_EMPLOYEES_READ = "hr.employees.read"
+PERM_HR_EMPLOYEES_WRITE = "hr.employees.write"
+PERM_HR_PAYROLL_READ = "hr.payroll.read"
+PERM_HR_PAYROLL_WRITE = "hr.payroll.write"
+PERM_HR_PAYROLL_POST = "hr.payroll.post"
+
 BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_RBAC_ROLES_READ, "rbac", "View roles and permissions"),
     PermissionDef(PERM_RBAC_ROLES_WRITE, "rbac", "Create and modify roles"),
@@ -93,6 +100,11 @@ BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_VAT_RATES_READ, "vat", "View configurable VAT rate profiles"),
     PermissionDef(PERM_VAT_RATES_WRITE, "vat", "Create and manage VAT rate profiles"),
     PermissionDef(PERM_VAT_REPORTS_READ, "vat", "View Mushak 6.1, 6.2, 6.3 and 9.1 summaries"),
+    PermissionDef(PERM_HR_EMPLOYEES_READ, "hr", "View employee directory and compensation"),
+    PermissionDef(PERM_HR_EMPLOYEES_WRITE, "hr", "Create and manage employees"),
+    PermissionDef(PERM_HR_PAYROLL_READ, "hr", "View monthly payroll runs and payslips"),
+    PermissionDef(PERM_HR_PAYROLL_WRITE, "hr", "Generate draft monthly payroll runs"),
+    PermissionDef(PERM_HR_PAYROLL_POST, "hr", "Post monthly payroll runs to General Ledger"),
 )
 
 ALL_BASELINE_CODES: tuple[str, ...] = tuple(p.code for p in BASELINE_PERMISSIONS)
@@ -133,6 +145,8 @@ BASELINE_ROLES: tuple[SystemRoleDef, ...] = (
             PERM_INVENTORY_STOCK_READ,
             PERM_VAT_RATES_READ,
             PERM_VAT_REPORTS_READ,
+            PERM_HR_EMPLOYEES_READ,
+            PERM_HR_PAYROLL_READ,
         ),
     ),
     SystemRoleDef(

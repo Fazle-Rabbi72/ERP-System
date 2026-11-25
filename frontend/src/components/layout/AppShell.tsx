@@ -1,8 +1,10 @@
 import {
+  Banknote,
   BookOpen,
   Building2,
   FileCheck2,
   FileSpreadsheet,
+  IdCard,
   Languages,
   LayoutDashboard,
   LogOut,
@@ -93,6 +95,18 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.vatMushak",
     icon: FileCheck2,
     permission: "vat.reports.read",
+  },
+  {
+    to: "/hr/employees",
+    labelKey: "nav.employees",
+    icon: IdCard,
+    permission: "hr.employees.read",
+  },
+  {
+    to: "/hr/payroll",
+    labelKey: "nav.payroll",
+    icon: Banknote,
+    permission: "hr.payroll.read",
   },
   {
     to: "/audit-logs",

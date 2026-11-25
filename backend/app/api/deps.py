@@ -23,6 +23,7 @@ from app.services.accounting_service import AccountingService
 from app.services.audit_service import AuditService
 from app.services.auth_service import AuthService
 from app.services.health_service import HealthService
+from app.services.hr_service import HrService
 from app.services.inventory_service import InventoryService
 from app.services.purchase_service import PurchaseService
 from app.services.rbac_service import RbacService
@@ -98,6 +99,10 @@ def get_inventory_service(request: Request) -> InventoryService:
 
 def get_vat_service(request: Request) -> VatService:
     return VatService(database=get_database(request))
+
+
+def get_hr_service(request: Request) -> HrService:
+    return HrService(database=get_database(request))
 
 
 async def get_current_auth(
