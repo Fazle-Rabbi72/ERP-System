@@ -27,6 +27,7 @@ from app.services.inventory_service import InventoryService
 from app.services.purchase_service import PurchaseService
 from app.services.rbac_service import RbacService
 from app.services.sales_service import SalesService
+from app.services.vat_service import VatService
 
 _BEARER = HTTPBearer(auto_error=False)
 logger = get_logger(__name__)
@@ -93,6 +94,10 @@ def get_purchase_service(request: Request) -> PurchaseService:
 
 def get_inventory_service(request: Request) -> InventoryService:
     return InventoryService(database=get_database(request))
+
+
+def get_vat_service(request: Request) -> VatService:
+    return VatService(database=get_database(request))
 
 
 async def get_current_auth(

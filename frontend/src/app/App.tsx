@@ -17,6 +17,7 @@ import { BillsPage } from "@/features/purchase/BillsPage";
 import { SuppliersPage } from "@/features/purchase/SuppliersPage";
 import { CustomersPage } from "@/features/sales/CustomersPage";
 import { InvoicesPage } from "@/features/sales/InvoicesPage";
+import { VatMushakPage } from "@/features/vat/VatMushakPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -73,6 +74,7 @@ export function App(): React.JSX.Element {
             <Route path="/purchase/bills" element={<BillsPage />} />
             <Route path="/inventory/catalog" element={<CatalogPage />} />
             <Route path="/inventory/stock" element={<StockPage />} />
+            <Route path="/vat/mushak" element={<VatMushakPage />} />
             <Route path="/audit-logs" element={<AuditLogsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

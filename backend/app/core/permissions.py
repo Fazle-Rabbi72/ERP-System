@@ -54,6 +54,11 @@ PERM_INVENTORY_WAREHOUSES_WRITE = "inventory.warehouses.write"
 PERM_INVENTORY_STOCK_READ = "inventory.stock.read"
 PERM_INVENTORY_STOCK_MOVE = "inventory.stock.move"
 
+# M5 VAT & Mushak permission codes
+PERM_VAT_RATES_READ = "vat.rates.read"
+PERM_VAT_RATES_WRITE = "vat.rates.write"
+PERM_VAT_REPORTS_READ = "vat.reports.read"
+
 BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_RBAC_ROLES_READ, "rbac", "View roles and permissions"),
     PermissionDef(PERM_RBAC_ROLES_WRITE, "rbac", "Create and modify roles"),
@@ -85,6 +90,9 @@ BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_INVENTORY_WAREHOUSES_WRITE, "inventory", "Create and manage warehouses"),
     PermissionDef(PERM_INVENTORY_STOCK_READ, "inventory", "View stock levels and movements"),
     PermissionDef(PERM_INVENTORY_STOCK_MOVE, "inventory", "Record stock in/out/adjustment"),
+    PermissionDef(PERM_VAT_RATES_READ, "vat", "View configurable VAT rate profiles"),
+    PermissionDef(PERM_VAT_RATES_WRITE, "vat", "Create and manage VAT rate profiles"),
+    PermissionDef(PERM_VAT_REPORTS_READ, "vat", "View Mushak 6.1, 6.2, 6.3 and 9.1 summaries"),
 )
 
 ALL_BASELINE_CODES: tuple[str, ...] = tuple(p.code for p in BASELINE_PERMISSIONS)
@@ -123,6 +131,8 @@ BASELINE_ROLES: tuple[SystemRoleDef, ...] = (
             PERM_INVENTORY_PRODUCTS_READ,
             PERM_INVENTORY_WAREHOUSES_READ,
             PERM_INVENTORY_STOCK_READ,
+            PERM_VAT_RATES_READ,
+            PERM_VAT_REPORTS_READ,
         ),
     ),
     SystemRoleDef(

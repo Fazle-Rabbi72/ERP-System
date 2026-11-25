@@ -1,6 +1,7 @@
 import {
   BookOpen,
   Building2,
+  FileCheck2,
   FileSpreadsheet,
   Languages,
   LayoutDashboard,
@@ -86,6 +87,12 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.stock",
     icon: Warehouse,
     permission: "inventory.stock.read",
+  },
+  {
+    to: "/vat/mushak",
+    labelKey: "nav.vatMushak",
+    icon: FileCheck2,
+    permission: "vat.reports.read",
   },
   {
     to: "/audit-logs",

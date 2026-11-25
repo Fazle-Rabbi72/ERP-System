@@ -10,6 +10,7 @@ from app.models.refresh_token import RefreshToken
 from app.models.sales import Customer, CustomerPayment, SalesInvoice, SalesInvoiceLine
 from app.models.tenant import Tenant
 from app.models.user import User
+from app.models.vat import VatRate
 
 __all__ = [
     "MONEY_TYPE",
@@ -36,5 +37,6 @@ __all__ = [
     "TenantBaseModel",
     "User",
     "UserRole",
+    "VatRate",
     "Warehouse",
 ]
