@@ -9,10 +9,10 @@ else
   EXT = sh
 endif
 
-.PHONY: help setup db-bootstrap migrate seed dev test lint
+.PHONY: help setup db-bootstrap migrate seed dev worker test lint
 
 help:
-	@echo "Targets: setup | db-bootstrap | migrate | seed | dev | test | lint"
+	@echo "Targets: setup | db-bootstrap | migrate | seed | dev | worker | test | lint"
 
 setup:
 	$(RUN) scripts/setup.$(EXT)
@@ -28,6 +28,9 @@ seed:
 
 dev:
 	$(RUN) scripts/dev.$(EXT)
+
+worker:
+	$(RUN) scripts/worker.$(EXT)
 
 test:
 	$(RUN) scripts/test.$(EXT)

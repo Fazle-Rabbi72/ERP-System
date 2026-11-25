@@ -91,3 +91,4 @@ def downgrade() -> None:
     for statement in rls_disable_statements("audit_logs"):
         op.execute(statement)
     op.drop_table("audit_logs")
+

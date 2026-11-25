@@ -56,3 +56,4 @@ async def get_audit_log(
 ) -> AuditLogResponse:
     entry = await service.get_log(tenant_id=auth.tenant_id, entry_id=entry_id)
     return AuditLogResponse.model_validate(entry)
+

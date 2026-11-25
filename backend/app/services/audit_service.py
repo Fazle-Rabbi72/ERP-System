@@ -152,3 +152,4 @@ class AuditService:
             if entry is None:
                 raise NotFoundError("Audit log entry not found.")
             return entry
+

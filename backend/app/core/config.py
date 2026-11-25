@@ -67,6 +67,10 @@ class Settings(BaseSettings):
     redis_ssl: bool = False
     redis_max_connections: int = Field(default=10, ge=1, le=1000)
 
+    # --- Background Worker (ARQ) ---
+    arq_poll_delay_seconds: float = Field(default=2.0, ge=0.2, le=60.0)
+    arq_max_jobs: int = Field(default=10, ge=1, le=100)
+
     # --- Security ---
     jwt_secret_key: SecretStr
     jwt_algorithm: Literal["HS256", "HS384", "HS512"] = "HS256"

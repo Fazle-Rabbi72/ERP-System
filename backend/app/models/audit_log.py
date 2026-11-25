@@ -31,3 +31,4 @@ class AuditLog(TenantBaseModel):
     after_data: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
     request_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
     ip_address: Mapped[str | None] = mapped_column(String(64), nullable=True)
+

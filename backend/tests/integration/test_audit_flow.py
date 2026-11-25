@@ -157,3 +157,4 @@ async def test_audit_log_recording_querying_and_db_immutability(
                 text("DELETE FROM audit_logs WHERE id = :id"),
                 {"id": entry_id},
             )
+
