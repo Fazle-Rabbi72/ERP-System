@@ -6,8 +6,10 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Receipt,
   Scale,
   ShieldAlert,
+  Users,
   X,
 } from "lucide-react";
 import * as React from "react";
@@ -44,6 +46,18 @@ const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.trialBalance",
     icon: Scale,
     permission: "accounting.reports.read",
+  },
+  {
+    to: "/sales/customers",
+    labelKey: "nav.customers",
+    icon: Users,
+    permission: "sales.customers.read",
+  },
+  {
+    to: "/sales/invoices",
+    labelKey: "nav.invoices",
+    icon: Receipt,
+    permission: "sales.invoices.read",
   },
   {
     to: "/audit-logs",

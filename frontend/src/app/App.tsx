@@ -10,6 +10,8 @@ import { AuditLogsPage } from "@/features/audit/AuditLogsPage";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { useAuthStore } from "@/features/auth/store";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
+import { CustomersPage } from "@/features/sales/CustomersPage";
+import { InvoicesPage } from "@/features/sales/InvoicesPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,6 +47,8 @@ export function App(): React.JSX.Element {
             <Route path="/accounting/accounts" element={<AccountsPage />} />
             <Route path="/accounting/journals" element={<JournalsPage />} />
             <Route path="/accounting/trial-balance" element={<TrialBalancePage />} />
+            <Route path="/sales/customers" element={<CustomersPage />} />
+            <Route path="/sales/invoices" element={<InvoicesPage />} />
             <Route path="/audit-logs" element={<AuditLogsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

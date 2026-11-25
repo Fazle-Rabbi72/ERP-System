@@ -24,6 +24,7 @@ from app.services.audit_service import AuditService
 from app.services.auth_service import AuthService
 from app.services.health_service import HealthService
 from app.services.rbac_service import RbacService
+from app.services.sales_service import SalesService
 
 _BEARER = HTTPBearer(auto_error=False)
 logger = get_logger(__name__)
@@ -78,6 +79,10 @@ def get_audit_service(request: Request) -> AuditService:
 
 def get_accounting_service(request: Request) -> AccountingService:
     return AccountingService(database=get_database(request))
+
+
+def get_sales_service(request: Request) -> SalesService:
+    return SalesService(database=get_database(request))
 
 
 async def get_current_auth(

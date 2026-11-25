@@ -30,6 +30,14 @@ PERM_ACCOUNTING_JOURNALS_WRITE = "accounting.journals.write"
 PERM_ACCOUNTING_JOURNALS_POST = "accounting.journals.post"
 PERM_ACCOUNTING_REPORTS_READ = "accounting.reports.read"
 
+# M2 Sales & Invoicing permission codes
+PERM_SALES_CUSTOMERS_READ = "sales.customers.read"
+PERM_SALES_CUSTOMERS_WRITE = "sales.customers.write"
+PERM_SALES_INVOICES_READ = "sales.invoices.read"
+PERM_SALES_INVOICES_WRITE = "sales.invoices.write"
+PERM_SALES_INVOICES_POST = "sales.invoices.post"
+PERM_SALES_PAYMENTS_WRITE = "sales.payments.write"
+
 BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_RBAC_ROLES_READ, "rbac", "View roles and permissions"),
     PermissionDef(PERM_RBAC_ROLES_WRITE, "rbac", "Create and modify roles"),
@@ -43,6 +51,12 @@ BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_ACCOUNTING_JOURNALS_WRITE, "accounting", "Create draft journal vouchers"),
     PermissionDef(PERM_ACCOUNTING_JOURNALS_POST, "accounting", "Post or reverse journal vouchers"),
     PermissionDef(PERM_ACCOUNTING_REPORTS_READ, "accounting", "View Trial Balance & GL reports"),
+    PermissionDef(PERM_SALES_CUSTOMERS_READ, "sales", "View customers"),
+    PermissionDef(PERM_SALES_CUSTOMERS_WRITE, "sales", "Create and manage customers"),
+    PermissionDef(PERM_SALES_INVOICES_READ, "sales", "View sales invoices"),
+    PermissionDef(PERM_SALES_INVOICES_WRITE, "sales", "Create draft sales invoices"),
+    PermissionDef(PERM_SALES_INVOICES_POST, "sales", "Post sales invoices to GL"),
+    PermissionDef(PERM_SALES_PAYMENTS_WRITE, "sales", "Record customer payments"),
 )
 
 ALL_BASELINE_CODES: tuple[str, ...] = tuple(p.code for p in BASELINE_PERMISSIONS)
@@ -74,6 +88,8 @@ BASELINE_ROLES: tuple[SystemRoleDef, ...] = (
             PERM_ACCOUNTING_ACCOUNTS_READ,
             PERM_ACCOUNTING_JOURNALS_READ,
             PERM_ACCOUNTING_REPORTS_READ,
+            PERM_SALES_CUSTOMERS_READ,
+            PERM_SALES_INVOICES_READ,
         ),
     ),
     SystemRoleDef(
