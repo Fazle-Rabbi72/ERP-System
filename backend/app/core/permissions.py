@@ -22,6 +22,14 @@ PERM_USERS_READ = "users.read"
 PERM_USERS_WRITE = "users.write"
 PERM_AUDIT_READ = "audit.read"
 
+# M1 Accounting & General Ledger permission codes
+PERM_ACCOUNTING_ACCOUNTS_READ = "accounting.accounts.read"
+PERM_ACCOUNTING_ACCOUNTS_WRITE = "accounting.accounts.write"
+PERM_ACCOUNTING_JOURNALS_READ = "accounting.journals.read"
+PERM_ACCOUNTING_JOURNALS_WRITE = "accounting.journals.write"
+PERM_ACCOUNTING_JOURNALS_POST = "accounting.journals.post"
+PERM_ACCOUNTING_REPORTS_READ = "accounting.reports.read"
+
 BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_RBAC_ROLES_READ, "rbac", "View roles and permissions"),
     PermissionDef(PERM_RBAC_ROLES_WRITE, "rbac", "Create and modify roles"),
@@ -29,6 +37,12 @@ BASELINE_PERMISSIONS: tuple[PermissionDef, ...] = (
     PermissionDef(PERM_USERS_READ, "users", "View users in the organisation"),
     PermissionDef(PERM_USERS_WRITE, "users", "Create and manage users"),
     PermissionDef(PERM_AUDIT_READ, "audit", "View immutable audit logs"),
+    PermissionDef(PERM_ACCOUNTING_ACCOUNTS_READ, "accounting", "View Chart of Accounts"),
+    PermissionDef(PERM_ACCOUNTING_ACCOUNTS_WRITE, "accounting", "Create and edit accounts"),
+    PermissionDef(PERM_ACCOUNTING_JOURNALS_READ, "accounting", "View journal vouchers"),
+    PermissionDef(PERM_ACCOUNTING_JOURNALS_WRITE, "accounting", "Create draft journal vouchers"),
+    PermissionDef(PERM_ACCOUNTING_JOURNALS_POST, "accounting", "Post or reverse journal vouchers"),
+    PermissionDef(PERM_ACCOUNTING_REPORTS_READ, "accounting", "View Trial Balance & GL reports"),
 )
 
 ALL_BASELINE_CODES: tuple[str, ...] = tuple(p.code for p in BASELINE_PERMISSIONS)
@@ -52,8 +66,15 @@ BASELINE_ROLES: tuple[SystemRoleDef, ...] = (
     SystemRoleDef(
         code="auditor",
         name="Auditor",
-        description="Read-only access to roles, users, and audit logs.",
-        permissions=(PERM_RBAC_ROLES_READ, PERM_USERS_READ, PERM_AUDIT_READ),
+        description="Read-only access to roles, users, accounting reports, and audit logs.",
+        permissions=(
+            PERM_RBAC_ROLES_READ,
+            PERM_USERS_READ,
+            PERM_AUDIT_READ,
+            PERM_ACCOUNTING_ACCOUNTS_READ,
+            PERM_ACCOUNTING_JOURNALS_READ,
+            PERM_ACCOUNTING_REPORTS_READ,
+        ),
     ),
     SystemRoleDef(
         code="viewer",
