@@ -1,5 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, BookOpen, FileSpreadsheet, Scale } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Banknote,
+  BarChart3,
+  FileCheck2,
+  Receipt,
+  ShoppingCart,
+  Users,
+  Warehouse,
+} from "lucide-react";
 import type * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -9,8 +19,8 @@ import { ErrorState } from "@/components/states/ErrorState";
 import { TableSkeleton } from "@/components/states/TableSkeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { AccountItem, TrialBalanceResponse } from "@/features/accounting/types";
 import { useAuthStore } from "@/features/auth/store";
+import type { DashboardSummary } from "@/features/reports/types";
 import { apiRequest, type PaginatedResponse } from "@/lib/api";
 import { formatBDT, toBanglaDigits } from "@/lib/format";
 
@@ -28,20 +38,10 @@ export function DashboardPage(): React.JSX.Element {
   const accessToken = useAuthStore((s) => s.accessToken);
   const banglaDigits = useAuthStore((s) => s.banglaDigits);
 
-  const accountsQuery = useQuery({
-    queryKey: ["accounting", "accounts", "summary"],
+  const summaryQuery = useQuery({
+    queryKey: ["reports", "dashboard-summary"],
     queryFn: ({ signal }) =>
-      apiRequest<PaginatedResponse<AccountItem>>("/accounting/accounts?page=1&page_size=1", {
-        accessToken,
-        signal,
-      }),
-    enabled: Boolean(accessToken),
-  });
-
-  const tbQuery = useQuery({
-    queryKey: ["accounting", "trial-balance", "summary"],
-    queryFn: ({ signal }) =>
-      apiRequest<TrialBalanceResponse>("/accounting/reports/trial-balance", {
+      apiRequest<DashboardSummary>("/reports/dashboard-summary", {
         accessToken,
         signal,
       }),
@@ -58,7 +58,13 @@ export function DashboardPage(): React.JSX.Element {
     enabled: Boolean(accessToken),
   });
 
-  const accountTotal = accountsQuery.data?.meta.total ?? 0;
+  const summary = summaryQuery.data;
+  const revNum = Number(summary?.total_revenue ?? 0);
+  const expNum = Number(summary?.total_expense ?? 0);
+  const totalFlow = revNum + expNum;
+  const revPct = totalFlow > 0 ? Math.round((revNum / totalFlow) * 100) : 0;
+
+  const fmtCount = (n: number): string => (banglaDigits ? toBanglaDigits(String(n)) : String(n));
 
   return (
     <div className="space-y-6">
@@ -71,48 +77,165 @@ export function DashboardPage(): React.JSX.Element {
         </p>
       </div>
 
-      <section className="grid gap-4 sm:grid-cols-2">
+      {/* Executive Financial KPIs */}
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              {t("dashboard.accountsCount")}
+              {t("reports.totalRevenue")}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold tabular-nums">
-              {banglaDigits ? toBanglaDigits(String(accountTotal)) : String(accountTotal)}
+            <p className="text-2xl font-bold tabular-nums text-emerald-700">
+              {formatBDT(summary?.total_revenue ?? "0.00", { banglaDigits })}
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              {t("dashboard.trialBalanceTotal")}
+              {t("reports.totalExpense")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold tabular-nums">
-              {formatBDT(tbQuery.data?.grand_total_debit ?? "0.00", { banglaDigits })}
+              {formatBDT(summary?.total_expense ?? "0.00", { banglaDigits })}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {t("reports.netProfit")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold tabular-nums text-primary">
+              {formatBDT(summary?.net_profit ?? "0.00", { banglaDigits })}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {t("reports.totalAssets")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold tabular-nums">
+              {formatBDT(summary?.total_assets ?? "0.00", { banglaDigits })}
             </p>
           </CardContent>
         </Card>
       </section>
 
-      <section aria-label={t("dashboard.quickActions")} className="grid gap-4 sm:grid-cols-3">
+      {/* Operational KPIs across Sales, Purchase, HR, Inventory */}
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium uppercase text-muted-foreground">
+              {t("dashboard.arDue")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xl font-bold tabular-nums">
+              {formatBDT(summary?.accounts_receivable_due ?? "0.00", { banglaDigits })}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium uppercase text-muted-foreground">
+              {t("dashboard.apDue")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xl font-bold tabular-nums">
+              {formatBDT(summary?.accounts_payable_due ?? "0.00", { banglaDigits })}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-1.5 text-xs font-medium uppercase text-muted-foreground">
+              <Users className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("dashboard.activeEmployees")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xl font-bold tabular-nums">
+              {fmtCount(summary?.active_employees_count ?? 0)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-1.5 text-xs font-medium uppercase text-muted-foreground">
+              <AlertTriangle className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
+              {t("inventory.lowStockAlerts")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xl font-bold tabular-nums">
+              {fmtCount(summary?.low_stock_products_count ?? 0)}
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Revenue vs Expense Visual Ratio */}
+      {totalFlow > 0 ? (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">{t("dashboard.revenueVsExpense")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex h-3 w-full overflow-hidden rounded-full bg-secondary">
+              <div
+                className="bg-emerald-600 transition-all"
+                style={{ width: `${String(revPct)}%` }}
+              />
+              <div
+                className="bg-rose-500 transition-all"
+                style={{ width: `${String(100 - revPct)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>
+                {t("reports.totalRevenue")}: {revPct}%
+              </span>
+              <span>
+                {t("reports.totalExpense")}: {100 - revPct}%
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {/* ERP Quick Actions */}
+      <section aria-label={t("dashboard.quickActions")} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[
-          { to: "/accounting/accounts", title: t("nav.accounts"), icon: BookOpen },
-          { to: "/accounting/journals", title: t("nav.journals"), icon: FileSpreadsheet },
-          { to: "/accounting/trial-balance", title: t("nav.trialBalance"), icon: Scale },
+          { to: "/reports/statements", title: t("nav.financialStatements"), icon: BarChart3 },
+          { to: "/sales/invoices", title: t("nav.invoices"), icon: Receipt },
+          { to: "/purchase/bills", title: t("nav.bills"), icon: ShoppingCart },
+          { to: "/inventory/stock", title: t("nav.stock"), icon: Warehouse },
+          { to: "/vat/mushak", title: t("nav.vatMushak"), icon: FileCheck2 },
+          { to: "/hr/payroll", title: t("nav.payroll"), icon: Banknote },
         ].map((item) => {
           const Icon = item.icon;
           return (
             <Link key={item.to} to={item.to} className="group block">
               <Card className="transition-colors group-hover:border-primary">
-                <CardContent className="flex items-center justify-between p-5">
+                <CardContent className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-3">
                     <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-                    <span className="font-semibold">{item.title}</span>
+                    <span className="text-sm font-semibold">{item.title}</span>
                   </div>
                   <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
                 </CardContent>

@@ -17,6 +17,7 @@ import { CatalogPage } from "@/features/inventory/CatalogPage";
 import { StockPage } from "@/features/inventory/StockPage";
 import { BillsPage } from "@/features/purchase/BillsPage";
 import { SuppliersPage } from "@/features/purchase/SuppliersPage";
+import { FinancialStatementsPage } from "@/features/reports/FinancialStatementsPage";
 import { CustomersPage } from "@/features/sales/CustomersPage";
 import { InvoicesPage } from "@/features/sales/InvoicesPage";
 import { VatMushakPage } from "@/features/vat/VatMushakPage";
@@ -70,6 +71,7 @@ export function App(): React.JSX.Element {
             <Route path="/accounting/accounts" element={<AccountsPage />} />
             <Route path="/accounting/journals" element={<JournalsPage />} />
             <Route path="/accounting/trial-balance" element={<TrialBalancePage />} />
+            <Route path="/reports/statements" element={<FinancialStatementsPage />} />
             <Route path="/sales/customers" element={<CustomersPage />} />
             <Route path="/sales/invoices" element={<InvoicesPage />} />
             <Route path="/purchase/suppliers" element={<SuppliersPage />} />

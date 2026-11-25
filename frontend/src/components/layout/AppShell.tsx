@@ -1,5 +1,6 @@
 import {
   Banknote,
+  BarChart3,
   BookOpen,
   Building2,
   FileCheck2,
@@ -52,6 +53,12 @@ const NAV_ITEMS: NavItem[] = [
     to: "/accounting/trial-balance",
     labelKey: "nav.trialBalance",
     icon: Scale,
+    permission: "accounting.reports.read",
+  },
+  {
+    to: "/reports/statements",
+    labelKey: "nav.financialStatements",
+    icon: BarChart3,
     permission: "accounting.reports.read",
   },
   {
