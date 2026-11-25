@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, ArrowLeftRight } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -204,7 +204,6 @@ export function StockPage(): React.JSX.Element {
               </div>
               <div className="sm:col-span-2 lg:col-span-5">
                 <Button type="submit" disabled={moveMutation.isPending}>
-                  <ArrowLeftRight className="h-4 w-4" aria-hidden="true" />
                   {t("inventory.recordMovement")}
                 </Button>
               </div>

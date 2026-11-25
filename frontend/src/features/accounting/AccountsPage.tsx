@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Sparkles } from "lucide-react";
+import { Plus } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -110,7 +110,6 @@ export function AccountsPage(): React.JSX.Element {
               disabled={seedMutation.isPending}
               onClick={() => { seedMutation.mutate(); }}
             >
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
               {seedMutation.isPending ? t("accounting.seeding") : t("accounting.seedDefault")}
             </Button>
             <Button size="sm" onClick={() => { setShowForm((v) => !v); }}>
@@ -220,7 +219,6 @@ export function AccountsPage(): React.JSX.Element {
               action={
                 canWrite ? (
                   <Button onClick={() => { seedMutation.mutate(); }}>
-                    <Sparkles className="h-4 w-4" aria-hidden="true" />
                     {t("accounting.seedDefault")}
                   </Button>
                 ) : undefined

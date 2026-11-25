@@ -206,7 +206,7 @@ function SidebarNav({ groups, label, onNavigate }: SidebarNavProps): React.JSX.E
     <nav aria-label={label} className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
       {groups.map((group) => (
         <div key={group.labelKey}>
-          <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/50">
+          <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
             {t(group.labelKey)}
           </p>
           <ul className="space-y-0.5">
@@ -222,12 +222,12 @@ function SidebarNav({ groups, label, onNavigate }: SidebarNavProps): React.JSX.E
                       cn(
                         "group flex min-h-[38px] items-center gap-3 rounded-md px-3 py-2 text-[13px] font-medium transition-all duration-150",
                         isActive
-                          ? "bg-sidebar-accent text-white shadow-[inset_2px_0_0_0_hsl(var(--primary-foreground))]"
-                          : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-white",
+                          ? "bg-sidebar-accent font-semibold text-primary shadow-[inset_3px_0_0_0_hsl(var(--primary))]"
+                          : "text-sidebar-foreground hover:bg-muted hover:text-foreground",
                       )
                     }
                   >
-                    <Icon className="h-4 w-4 shrink-0 opacity-90" aria-hidden="true" />
+                    <Icon className="h-4 w-4 shrink-0 opacity-85" aria-hidden="true" />
                     <span className="truncate">{t(item.labelKey)}</span>
                   </NavLink>
                 </li>
@@ -244,12 +244,12 @@ function BrandMark(): React.JSX.Element {
   const { t } = useTranslation();
   return (
     <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-5">
-      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white ring-1 ring-white/15">
+      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
         <Building2 className="h-4 w-4" aria-hidden="true" />
       </span>
       <div className="leading-tight">
-        <p className="text-sm font-semibold tracking-tight text-white">{t("app.name")}</p>
-        <p className="text-[11px] text-sidebar-foreground/60">{t("app.vendor")}</p>
+        <p className="text-sm font-semibold tracking-tight text-foreground">{t("app.name")}</p>
+        <p className="text-[11px] text-muted-foreground">{t("app.vendor")}</p>
       </div>
     </div>
   );
@@ -309,19 +309,19 @@ export function AppShell(): React.JSX.Element {
   const userCard = (
     <div className="border-t border-sidebar-border p-3">
       <div className="flex items-center gap-3 rounded-md px-2 py-1.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white ring-1 ring-white/15">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
           {initialsOf(userName)}
         </span>
         <div className="min-w-0 flex-1 leading-tight">
-          <p className="truncate text-[13px] font-medium text-white">{userName}</p>
-          <p className="truncate text-[11px] text-sidebar-foreground/60">{user?.email ?? ""}</p>
+          <p className="truncate text-[13px] font-medium text-foreground">{userName}</p>
+          <p className="truncate text-[11px] text-muted-foreground">{user?.email ?? ""}</p>
         </div>
         <button
           type="button"
           aria-label={t("app.logout")}
           title={t("app.logout")}
           onClick={() => void logout()}
-          className="rounded-md p-2 text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <LogOut className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -339,7 +339,7 @@ export function AppShell(): React.JSX.Element {
       </a>
 
       {/* Desktop Sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-sidebar lg:flex">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar lg:flex">
         <BrandMark />
         <SidebarNav groups={visibleGroups} label="Main navigation" />
         {userCard}
@@ -361,7 +361,7 @@ export function AppShell(): React.JSX.Element {
         />
         <aside
           className={cn(
-            "relative z-10 flex h-full w-72 max-w-[85vw] flex-col bg-sidebar shadow-2xl transition-transform duration-200 ease-out",
+            "relative z-10 flex h-full w-72 max-w-[85vw] flex-col border-r border-sidebar-border bg-sidebar shadow-2xl transition-transform duration-200 ease-out",
             mobileOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
@@ -373,7 +373,7 @@ export function AppShell(): React.JSX.Element {
               onClick={() => {
                 setMobileOpen(false);
               }}
-              className="rounded-md p-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-white"
+              className="rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
             >
               <X className="h-5 w-5" />
             </button>

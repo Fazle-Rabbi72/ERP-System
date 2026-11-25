@@ -19,10 +19,10 @@
     --border: 220 16% 89%;
     --input: 220 14% 80%;
     --ring: 226 68% 45%;
-    --sidebar: 224 42% 11%;
-    --sidebar-foreground: 220 18% 78%;
-    --sidebar-accent: 224 32% 19%;
-    --sidebar-border: 224 28% 19%;
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 224 20% 34%;
+    --sidebar-accent: 226 68% 96%;
+    --sidebar-border: 220 16% 89%;
   }
 
   * {

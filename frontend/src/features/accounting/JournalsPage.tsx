@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -374,7 +374,6 @@ export function JournalsPage(): React.JSX.Element {
                               disabled={postMutation.isPending}
                               onClick={() => { postMutation.mutate(entry.id); }}
                             >
-                              <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                               {t("accounting.post")}
                             </Button>
                           ) : null}
@@ -385,7 +384,6 @@ export function JournalsPage(): React.JSX.Element {
                               disabled={reverseMutation.isPending}
                               onClick={() => { reverseMutation.mutate(entry.id); }}
                             >
-                              <RotateCcw className="h-4 w-4" aria-hidden="true" />
                               {t("accounting.reverse")}
                             </Button>
                           ) : null}

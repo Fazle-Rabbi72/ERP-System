@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Info, CheckCircle2, FileText, Plus, Printer, X } from "lucide-react";
+import { Info, FileText, Plus, Printer, X } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -305,7 +305,6 @@ export function PayrollPage(): React.JSX.Element {
               <div className="flex items-center justify-end gap-2 sm:col-span-3">
                 {postError ? <p className="text-sm text-destructive">{postError}</p> : null}
                 <Button type="submit" disabled={postRunMutation.isPending}>
-                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                   {t("sales.postToGl")}
                 </Button>
               </div>

@@ -604,7 +604,6 @@ export function VatMushakPage(): React.JSX.Element {
                                 setSelectedInvoiceId(item.invoice_id);
                               }}
                             >
-                              <FileText className="h-3.5 w-3.5" aria-hidden="true" />
                               {t("vat.viewMushak63")}
                             </Button>
                           </td>

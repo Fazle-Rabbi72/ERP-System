@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Banknote, CheckCircle2, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -481,7 +481,6 @@ export function InvoicesPage(): React.JSX.Element {
                               disabled={postMutation.isPending}
                               onClick={() => { postMutation.mutate(inv.id); }}
                             >
-                              <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                               {t("sales.postToGl")}
                             </Button>
                           ) : null}
@@ -495,7 +494,6 @@ export function InvoicesPage(): React.JSX.Element {
                                 setPayError(null);
                               }}
                             >
-                              <Banknote className="h-4 w-4" aria-hidden="true" />
                               {t("sales.receivePayment")}
                             </Button>
                           ) : null}
